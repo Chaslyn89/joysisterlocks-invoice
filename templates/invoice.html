@@ -57,18 +57,25 @@
             font-size: 12px;
         }
         
-        /* Info Grid - Table based for PDF stability */
+        /* Info Grid - FORCED TABLE LAYOUT for PDF compatibility */
         .info-table {
             width: 100%;
+            display: table;
+            table-layout: fixed;
             border-collapse: collapse;
             margin-bottom: 12px;
             background: #f8f9fa;
         }
         
+        .info-table tr {
+            display: table-row;
+        }
+        
         .info-table td {
-            padding: 6px;
-            vertical-align: top;
+            display: table-cell;
             width: 33%;
+            vertical-align: top;
+            padding: 6px;
         }
         
         .info-table h4 {
@@ -246,7 +253,7 @@
             <h2>TAX INVOICE</h2>
         </div>
         
-        <!-- Info Grid - Table based -->
+        <!-- Info Grid - Forced table layout -->
         <table class="info-table">
             <tr>
                 <td>
