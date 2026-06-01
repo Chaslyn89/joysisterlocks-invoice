@@ -392,10 +392,10 @@ def get_client_stats():
         cursor.execute('SELECT COUNT(*) AS total FROM clients')
         total_clients = cursor.fetchone()['total']
         
-        cursor.execute('SELECT COUNT(*) AS vip FROM clients WHERE category = "VIP"')
+        cursor.execute("SELECT COUNT(*) AS vip FROM clients WHERE category = 'VIP'")
         vip_count = cursor.fetchone()['vip']
         
-        cursor.execute('SELECT COUNT(*) AS regular FROM clients WHERE category = "Regular"')
+        cursor.execute("SELECT COUNT(*) AS regular FROM clients WHERE category = 'Regular'")
         regular_count = cursor.fetchone()['regular']
         
         current_month = get_current_date()[:7]
@@ -417,10 +417,10 @@ def get_client_stats():
         cursor.execute('SELECT COALESCE(AVG(amount), 0) AS avg_visit FROM service_history')
         avg_visit = cursor.fetchone()['avg_visit']
         
-        cursor.execute('SELECT COUNT(*) AS at_risk FROM clients WHERE retention_status = "At Risk"')
+        cursor.execute("SELECT COUNT(*) AS at_risk FROM clients WHERE retention_status = 'At Risk'")
         at_risk = cursor.fetchone()['at_risk']
         
-        cursor.execute('SELECT COUNT(*) AS lost FROM clients WHERE retention_status = "Lost"')
+        cursor.execute("SELECT COUNT(*) AS lost FROM clients WHERE retention_status = 'Lost'")
         lost = cursor.fetchone()['lost']
         
         return {
