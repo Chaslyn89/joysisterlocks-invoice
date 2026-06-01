@@ -581,6 +581,10 @@ def add_allergy_record(client_id):
     add_allergy(client_id, data.get("type"), data.get("description"), data.get("severity", "Medium"))
     return jsonify({"success": True})
 
-if __name__ == "__main__":
+# ============ FORCE DATABASE INITIALIZATION ON STARTUP ============
+with app.app_context():
     init_db()
+    print("Database initialized successfully")
+
+if __name__ == "__main__":
     app.run(debug=True)
