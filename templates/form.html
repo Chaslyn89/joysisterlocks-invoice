@@ -309,7 +309,7 @@
                     <div class="stat-label">New This Month</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">KES {{ "{:,.0f}".format(stats.total_revenue) if stats else 0 }}</div>
+                    <div class="stat-number">KES {{ "{:,.0f}".format(stats.gross_revenue) if stats and stats.gross_revenue else 0 }}</div>
                     <div class="stat-label">Total Revenue</div>
                 </div>
             </div>
@@ -509,7 +509,7 @@
                 </div>
                 <div class="summary-row">
                     <span>📊 Visits: ${client.total_visits || 0}</span>
-                    <span>💰 Spent: KES ${(client.total_spent || 0).toLocaleString()}</span>
+                    <span>💰 Spent: KES ${(client.gross_spent || 0).toLocaleString()}</span>
                 </div>
                 <div class="summary-row">
                     <span>📅 Last: ${client.last_visit || 'Never'}</span>
