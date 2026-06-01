@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Management - Joy Sisterlocks</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #D6456F 0%, #C59B9B 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #D6456F;
+            font-size: 28px;
+        }
+        
+        .header p {
+            color: #5A4A52;
+            font-size: 14px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-link {
+            padding: 8px 16px;
+            background: #FDF8F9;
+            color: #D6456F;
+            text-decoration: none;
+            border-radius: 30px;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover {
+            background: #D6456F;
+            color: white;
+        }
+        
+        /* Form Card */
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .form-title {
+            color: #4A2B42;
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #D6456F;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #4A2B42;
+            margin-bottom: 8px;
+        }
+        
+        .form-group input, .form-group select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #D6456F;
+        }
+        
+        /* Filter Section */
+        .filter-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            background: #FDF8F9;
+            border: 1px solid #e0e0e0;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background: #D6456F;
+            color: white;
+            border-color: #D6456F;
+        }
+        
+        .filter-btn:hover:not(.active) {
+            background: #eee;
+        }
+        
+        .custom-range {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        
+        .custom-range input {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+        }
+        
+        /* Stats Summary */
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-box {
+            background: white;
+            border-radius: 16px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .stat-box-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #D6456F;
+        }
+        
+        .stat-box-label {
+            font-size: 12px;
+            color: #5A4A52;
+            margin-top: 5px;
+        }
+        
+        .stat-box-sub {
+            font-size: 11px;
+            color: #4CAF50;
+            margin-top: 5px;
+        }
+        
+        /* Charts Row */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .chart-title {
+            color: #4A2B42;
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #D6456F;
+        }
+        
+        canvas {
+            max-height: 250px;
+        }
+        
+        /* Profit Card */
+        .profit-card {
+            background: linear-gradient(135deg, #4A2B42 0%, #2d1b2e 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .profit-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .profit-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .profit-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .profit-positive {
+            color: #4CAF50;
+        }
+        
+        .profit-negative {
+            color: #D6456F;
+        }
+        
+        /* Table */
+        .table-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        
+        .table-title {
+            color: #4A2B42;
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #D6456F;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            padding: 12px 8px;
+            background: #FDF8F9;
+            color: #4A2B42;
+            font-size: 13px;
+        }
+        
+        td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+        
+        tr:hover {
+            background: #FDF8F9;
+        }
+        
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #D6456F;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px 10px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .delete-btn:hover {
+            background: #FDF8F9;
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .page-btn {
+            padding: 8px 14px;
+            background: #FDF8F9;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        
+        .page-btn.active {
+            background: #D6456F;
+            color: white;
+            border-color: #D6456F;
+        }
+        
+        .page-btn:hover:not(.active) {
+            background: #eee;
+        }
+        
+        .category-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .category-Rent { background: #2196F320; color: #2196F3; }
+        .category-Products { background: #4CAF5020; color: #4CAF50; }
+        .category-Electricity { background: #FF980020; color: #FF9800; }
+        .category-Water { background: #00BCD420; color: #00BCD4; }
+        .category-Staff { background: #9C27B020; color: #9C27B0; }
+        .category-Marketing { background: #E91E6320; color: #E91E63; }
+        .category-Other { background: #9E9E9E20; color: #9E9E9E; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #5A4A52;
+        }
+        
+        .btn-primary {
+            background: #D6456F;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background: #b83b5e;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: white;
+            color: #D6456F;
+            text-decoration: none;
+            border-radius: 40px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: #FDF8F9;
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .form-row, .charts-row {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .profit-card {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>💰 Expense Management</h1>
+                <p>Track your business expenses and see where your money goes</p>
+            </div>
+            <div class="nav-links">
+                <a href="/dashboard" class="nav-link">📊 Dashboard</a>
+                <a href="/" class="nav-link">📄 New Invoice</a>
+                <a href="/clients" class="nav-link">👥 Clients</a>
+                <a href="/logout" class="nav-link">🚪 Logout</a>
+            </div>
+        </div>
+        
+        <!-- Add Expense Form -->
+        <div class="form-card">
+            <div class="form-title">➕ Add New Expense</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Category *</label>
+                    <select id="expense-category">
+                        <option value="Rent">🏢 Rent</option>
+                        <option value="Products">💄 Hair Products</option>
+                        <option value="Electricity">⚡ Electricity</option>
+                        <option value="Water">💧 Water</option>
+                        <option value="Staff">👥 Staff Salaries</option>
+                        <option value="Marketing">📢 Marketing</option>
+                        <option value="Other">📦 Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Amount (KES) *</label>
+                    <input type="number" id="expense-amount" placeholder="e.g., 5000">
+                </div>
+                <div class="form-group">
+                    <label>Date *</label>
+                    <input type="date" id="expense-date" value="">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" id="expense-description" placeholder="What was this expense for?">
+                </div>
+            </div>
+            <button class="btn-primary" onclick="addExpense()">💾 Save Expense</button>
+        </div>
+        
+        <!-- Filter Section -->
+        <div class="filter-card">
+            <div class="form-title">🔍 Filter Expenses</div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="today">Today</button>
+                <button class="filter-btn" data-filter="week">This Week</button>
+                <button class="filter-btn" data-filter="month">This Month</button>
+                <button class="filter-btn" data-filter="year">This Year</button>
+                <button class="filter-btn" data-filter="custom">Custom</button>
+            </div>
+            <div id="custom-range" style="display: none;" class="custom-range">
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" id="start-date">
+                </div>
+                <div class="form-group">
+                    <label>End Date</label>
+                    <input type="date" id="end-date">
+                </div>
+                <button class="btn-primary" onclick="applyCustomRange()" style="padding: 10px 20px;">Apply</button>
+            </div>
+        </div>
+        
+        <!-- Stats Summary -->
+        <div class="stats-summary" id="stats-summary">
+            <div class="stat-box">
+                <div class="stat-box-value" id="total-expenses">-</div>
+                <div class="stat-box-label">Total Expenses</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-box-value" id="avg-monthly">-</div>
+                <div class="stat-box-label">Avg Monthly</div>
+                <div class="stat-box-sub" id="date-range-label"></div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-box-value" id="top-category-value">-</div>
+                <div class="stat-box-label" id="top-category-label">Top Category</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-box-value" id="expense-count">-</div>
+                <div class="stat-box-label">Transactions</div>
+            </div>
+        </div>
+        
+        <!-- Profit Card -->
+        <div class="profit-card" id="profit-card">
+            <div class="profit-item">
+                <div class="profit-label">💰 Revenue (This Period)</div>
+                <div class="profit-value" id="period-revenue">-</div>
+            </div>
+            <div class="profit-item">
+                <div class="profit-label">💸 Expenses (This Period)</div>
+                <div class="profit-value" id="period-expenses">-</div>
+            </div>
+            <div class="profit-item">
+                <div class="profit-label">💎 Net Profit</div>
+                <div class="profit-value" id="period-profit">-</div>
+            </div>
+            <div class="profit-item">
+                <div class="profit-label">📊 Profit Margin</div>
+                <div class="profit-value" id="profit-margin">-</div>
+            </div>
+        </div>
+        
+        <!-- Charts Row -->
+        <div class="charts-row">
+            <div class="chart-card">
+                <div class="chart-title">📊 Expenses by Category</div>
+                <canvas id="categoryChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">📈 Monthly Expense Trend</div>
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Expenses Table -->
+        <div class="table-card">
+            <div class="table-title">
+                📋 Expense History
+                <span id="pagination-info" style="font-size: 12px; font-weight: normal;"></span>
+            </div>
+            <div id="expenses-table">
+                <div class="empty-state">💸 Loading expenses...</div>
+            </div>
+            <div id="pagination" class="pagination"></div>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="/dashboard" class="back-btn">← Back to Dashboard</a>
+        </div>
+    </div>
+    
+    <script>
+        let categoryChart = null;
+        let trendChart = null;
+        let currentFilter = 'today';
+        let currentPage = 1;
+        let totalPages = 1;
+        let currentData = [];
+        
+        // Set default date to today
+        document.getElementById('expense-date').value = new Date().toISOString().split('T')[0];
+        
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.filter;
+                currentPage = 1;
+                
+                if (currentFilter === 'custom') {
+                    document.getElementById('custom-range').style.display = 'flex';
+                    loadExpenses();
+                } else {
+                    document.getElementById('custom-range').style.display = 'none';
+                    loadExpenses();
+                }
+            });
+        });
+        
+        async function loadExpenses() {
+            let url = `/api/expenses?page=${currentPage}&limit=50`;
+            
+            const today = new Date();
+            let startDate = null;
+            let endDate = null;
+            
+            switch(currentFilter) {
+                case 'today':
+                    startDate = today.toISOString().split('T')[0];
+                    endDate = startDate;
+                    break;
+                case 'week':
+                    const weekAgo = new Date(today);
+                    weekAgo.setDate(today.getDate() - 7);
+                    startDate = weekAgo.toISOString().split('T')[0];
+                    endDate = today.toISOString().split('T')[0];
+                    break;
+                case 'month':
+                    const monthAgo = new Date(today);
+                    monthAgo.setMonth(today.getMonth() - 1);
+                    startDate = monthAgo.toISOString().split('T')[0];
+                    endDate = today.toISOString().split('T')[0];
+                    break;
+                case 'year':
+                    const yearAgo = new Date(today);
+                    yearAgo.setFullYear(today.getFullYear() - 1);
+                    startDate = yearAgo.toISOString().split('T')[0];
+                    endDate = today.toISOString().split('T')[0];
+                    break;
+                case 'custom':
+                    startDate = document.getElementById('start-date').value;
+                    endDate = document.getElementById('end-date').value;
+                    break;
+            }
+            
+            if (startDate) url += `&start_date=${startDate}`;
+            if (endDate) url += `&end_date=${endDate}`;
+            
+            try {
+                const response = await fetch(url);
+                if (response.ok) {
+                    const data = await response.json();
+                    currentData = data.expenses || [];
+                    totalPages = data.total_pages || 1;
+                    displayExpenses(currentData);
+                    updatePagination();
+                    calculateStats(currentData);
+                    updateProfitCard(startDate, endDate);
+                    updateCharts(currentData);
+                } else {
+                    document.getElementById('expenses-table').innerHTML = '<div class="empty-state">⚠️ Error loading expenses</div>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('expenses-table').innerHTML = '<div class="empty-state">⚠️ Error loading expenses</div>';
+            }
+        }
+        
+        async function updateProfitCard(startDate, endDate) {
+            if (!startDate || !endDate) return;
+            
+            try {
+                const response = await fetch(`/api/revenue-summary?start_date=${startDate}&end_date=${endDate}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('period-revenue').textContent = 'KES ' + (data.revenue || 0).toLocaleString();
+                    document.getElementById('period-expenses').textContent = 'KES ' + (data.expenses || 0).toLocaleString();
+                    
+                    const profit = (data.revenue || 0) - (data.expenses || 0);
+                    const profitElement = document.getElementById('period-profit');
+                    profitElement.textContent = 'KES ' + profit.toLocaleString();
+                    profitElement.className = 'profit-value ' + (profit >= 0 ? 'profit-positive' : 'profit-negative');
+                    
+                    const margin = data.revenue > 0 ? ((profit / data.revenue) * 100).toFixed(1) : 0;
+                    const marginElement = document.getElementById('profit-margin');
+                    marginElement.textContent = margin + '%';
+                    marginElement.className = 'profit-value ' + (profit >= 0 ? 'profit-positive' : 'profit-negative');
+                }
+            } catch (error) {
+                console.error('Error loading revenue:', error);
+            }
+        }
+        
+        function displayExpenses(expenses) {
+            const container = document.getElementById('expenses-table');
+            
+            if (expenses.length === 0) {
+                container.innerHTML = '<div class="empty-state">💸 No expenses found for this period</div>';
+                return;
+            }
+            
+            const getCategoryClass = (category) => {
+                return category.replace(/\s/g, '');
+            };
+            
+            const tableHtml = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Amount (KES)</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${expenses.map(e => `
+                            <tr>
+                                <td>${escapeHtml(e.expense_date)}</td>
+                                <td><span class="category-badge category-${getCategoryClass(e.category)}">${escapeHtml(e.category)}</span></td>
+                                <td>${escapeHtml(e.description || '-')}</td>
+                                <td style="font-weight: bold; color: #D6456F;">KES ${(e.amount || 0).toLocaleString()}</td>
+                                <td><button class="delete-btn" onclick="deleteExpense(${e.id})">🗑️</button></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = tableHtml;
+        }
+        
+        function updatePagination() {
+            const paginationDiv = document.getElementById('pagination');
+            document.getElementById('pagination-info').textContent = `Page ${currentPage} of ${totalPages}`;
+            
+            if (totalPages <= 1) {
+                paginationDiv.innerHTML = '';
+                return;
+            }
+            
+            let pages = [];
+            for (let i = 1; i <= Math.min(totalPages, 10); i++) {
+                pages.push(`<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`);
+            }
+            
+            paginationDiv.innerHTML = pages.join('');
+        }
+        
+        function goToPage(page) {
+            currentPage = page;
+            loadExpenses();
+        }
+        
+        function calculateStats(expenses) {
+            const total = expenses.reduce((sum, e) => sum + (e.amount || 0), 0);
+            document.getElementById('total-expenses').textContent = 'KES ' + total.toLocaleString();
+            document.getElementById('expense-count').textContent = expenses.length;
+            
+            // Calculate average monthly based on actual date range
+            if (expenses.length > 0) {
+                const dates = expenses.map(e => new Date(e.expense_date));
+                const oldest = new Date(Math.min(...dates));
+                const newest = new Date(Math.max(...dates));
+                const months = Math.max(1, 
+                    ((newest.getFullYear() - oldest.getFullYear()) * 12) 
+                    + newest.getMonth() - oldest.getMonth() + 1
+                );
+                const avgMonthly = Math.round(total / months);
+                document.getElementById('avg-monthly').textContent = 'KES ' + avgMonthly.toLocaleString();
+                
+                // Set date range label
+                if (currentFilter === 'today') {
+                    document.getElementById('date-range-label').textContent = 'Today';
+                } else if (currentFilter === 'week') {
+                    document.getElementById('date-range-label').textContent = 'Last 7 days';
+                } else if (currentFilter === 'month') {
+                    document.getElementById('date-range-label').textContent = 'Last 30 days';
+                } else {
+                    document.getElementById('date-range-label').textContent = `${oldest.toLocaleDateString()} - ${newest.toLocaleDateString()}`;
+                }
+            }
+            
+            // Calculate top category
+            const categoryTotals = {};
+            expenses.forEach(e => {
+                const cat = e.category;
+                categoryTotals[cat] = (categoryTotals[cat] || 0) + (e.amount || 0);
+            });
+            
+            let topCategory = 'None';
+            let topAmount = 0;
+            for (const [cat, amt] of Object.entries(categoryTotals)) {
+                if (amt > topAmount) {
+                    topAmount = amt;
+                    topCategory = cat;
+                }
+            }
+            
+            const percentage = total > 0 ? ((topAmount / total) * 100).toFixed(1) : 0;
+            document.getElementById('top-category-value').textContent = topCategory !== 'None' ? `${topCategory} (${percentage}%)` : '-';
+            document.getElementById('top-category-label').innerHTML = topCategory !== 'None' ? `Top Category<br><span style="font-size: 11px;">KES ${topAmount.toLocaleString()}</span>` : 'Top Category';
+        }
+        
+        function updateCharts(expenses) {
+            // Category breakdown
+            const categoryTotals = {};
+            expenses.forEach(e => {
+                const cat = e.category;
+                categoryTotals[cat] = (categoryTotals[cat] || 0) + (e.amount || 0);
+            });
+            
+            const categories = Object.keys(categoryTotals);
+            const amounts = Object.values(categoryTotals);
+            const colors = ['#D6456F', '#4CAF50', '#2196F3', '#FF9800', '#9C27B0', '#00BCD4', '#9E9E9E'];
+            
+            if (categoryChart) categoryChart.destroy();
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            categoryChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        data: amounts,
+                        backgroundColor: colors.slice(0, categories.length),
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+            
+            // Monthly trend
+            const monthlyTotals = {};
+            expenses.forEach(e => {
+                const month = e.expense_date.substring(0, 7);
+                monthlyTotals[month] = (monthlyTotals[month] || 0) + (e.amount || 0);
+            });
+            
+            const months = Object.keys(monthlyTotals).sort().slice(-6);
+            const monthlyAmounts = months.map(m => monthlyTotals[m]);
+            
+            if (trendChart) trendChart.destroy();
+            const trendCtx = document.getElementById('trendChart').getContext('2d');
+            trendChart = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Expenses (KES)',
+                        data: monthlyAmounts,
+                        borderColor: '#D6456F',
+                        backgroundColor: 'rgba(214, 69, 111, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+        
+        function applyCustomRange() {
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+            if (startDate && endDate) {
+                currentPage = 1;
+                loadExpenses();
+            } else {
+                alert('Please select both start and end dates');
+            }
+        }
+        
+        async function addExpense() {
+            const category = document.getElementById('expense-category').value;
+            const amount = parseInt(document.getElementById('expense-amount').value);
+            const date = document.getElementById('expense-date').value;
+            const description = document.getElementById('expense-description').value;
+            
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+            
+            if (!date) {
+                alert('Please select a date');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/expense', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ category, amount, description, date })
+                });
+                
+                if (response.ok) {
+                    document.getElementById('expense-amount').value = '';
+                    document.getElementById('expense-description').value = '';
+                    document.getElementById('expense-date').value = new Date().toISOString().split('T')[0];
+                    loadExpenses();
+                    
+                    const btn = document.querySelector('.btn-primary');
+                    const originalText = btn.textContent;
+                    btn.textContent = '✅ Saved!';
+                    setTimeout(() => { btn.textContent = originalText; }, 2000);
+                } else {
+                    const error = await response.json();
+                    alert(error.error || 'Error saving expense');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error saving expense');
+            }
+        }
+        
+        async function deleteExpense(id) {
+            if (!confirm('Are you sure you want to delete this expense? This action cannot be undone.')) return;
+            
+            try {
+                const response = await fetch(`/api/expense/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    loadExpenses();
+                } else {
+                    alert('Error deleting expense');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error deleting expense');
+            }
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Load expenses on page load
+        loadExpenses();
+    </script>
+</body>
+</html>

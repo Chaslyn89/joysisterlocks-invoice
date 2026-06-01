@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Joy Sisterlocks</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #D6456F 0%, #C59B9B 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #D6456F;
+            font-size: 28px;
+        }
+        
+        .header p {
+            color: #5A4A52;
+            font-size: 14px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-link {
+            padding: 8px 16px;
+            background: #FDF8F9;
+            color: #D6456F;
+            text-decoration: none;
+            border-radius: 30px;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover {
+            background: #D6456F;
+            color: white;
+        }
+        
+        .logout {
+            background: #eee;
+            color: #D6456F;
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            background: white;
+            border-radius: 20px;
+            padding: 15px 25px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .action-btn {
+            padding: 10px 20px;
+            background: #D6456F;
+            color: white;
+            text-decoration: none;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .action-btn:hover {
+            background: #b83b5e;
+            transform: translateY(-2px);
+        }
+        
+        .action-btn.secondary {
+            background: #4A2B42;
+        }
+        
+        .action-btn.secondary:hover {
+            background: #3a1f33;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #D6456F;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: #5A4A52;
+            margin-top: 5px;
+        }
+        
+        .stat-positive {
+            color: #4CAF50;
+        }
+        
+        .stat-negative {
+            color: #D6456F;
+        }
+        
+        .error-value {
+            color: #999;
+            font-size: 24px;
+        }
+        
+        /* Chart Section */
+        .chart-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .chart-title {
+            color: #4A2B42;
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #D6456F;
+        }
+        
+        canvas {
+            max-height: 300px;
+        }
+        
+        /* Two Column Layout */
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .card-title {
+            color: #4A2B42;
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #D6456F;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        /* Appointment List */
+        .appointment-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .appointment-time {
+            background: #D6456F;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .appointment-name {
+            font-weight: 600;
+            color: #4A2B42;
+        }
+        
+        .appointment-service {
+            font-size: 12px;
+            color: #5A4A52;
+        }
+        
+        /* Client List */
+        .client-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .client-name {
+            font-weight: 600;
+            color: #4A2B42;
+        }
+        
+        .client-status {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+        
+        .status-Active {
+            background: #4CAF5020;
+            color: #4CAF50;
+        }
+        
+        .status-At-Risk {
+            background: #FF980020;
+            color: #FF9800;
+        }
+        
+        .status-Inactive {
+            background: #9E9E9E20;
+            color: #9E9E9E;
+        }
+        
+        .status-Lost {
+            background: #D6456F20;
+            color: #D6456F;
+        }
+        
+        /* Balance Item */
+        .balance-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .balance-amount {
+            color: #D6456F;
+            font-weight: bold;
+        }
+        
+        /* Expense Item */
+        .expense-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .expense-category {
+            font-size: 12px;
+            color: #5A4A52;
+        }
+        
+        /* Button */
+        .btn-small {
+            padding: 6px 12px;
+            background: #D6456F;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 11px;
+            transition: background 0.2s;
+        }
+        
+        .btn-small:hover {
+            background: #b83b5e;
+        }
+        
+        .view-all {
+            font-size: 12px;
+            color: #D6456F;
+            text-decoration: none;
+        }
+        
+        .view-all:hover {
+            text-decoration: underline;
+        }
+        
+        .refresh-btn {
+            background: #D6456F;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        
+        .refresh-btn:hover {
+            background: #b83b5e;
+        }
+        
+        .empty-state {
+            text-align: center;
+            color: #5A4A52;
+            padding: 20px;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .two-columns {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .stat-value {
+                font-size: 24px;
+            }
+            .quick-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .action-btn {
+                text-align: center;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>📊 Joy Sisterlocks Dashboard</h1>
+                <p>Welcome back, Joy! Here's your business at a glance.</p>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">📄 New Invoice</a>
+                <a href="/clients" class="nav-link">👥 Clients</a>
+                <a href="/expenses" class="nav-link">💰 Expenses</a>
+                <a href="/logout" class="nav-link logout">🚪 Logout</a>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="/" class="action-btn">➕ New Invoice</a>
+            <a href="/clients" class="action-btn secondary">👤 Add Client</a>
+            <a href="/expenses" class="action-btn secondary">💸 Add Expense</a>
+        </div>
+        
+        <!-- Stats Grid -->
+        <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="today-revenue">-</div>
+                <div class="stat-label">Today's Revenue</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-value" id="today-appointments">-</div>
+                <div class="stat-label">Today's Appointments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💳</div>
+                <div class="stat-value" id="total-balance">-</div>
+                <div class="stat-label">Outstanding Balance</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value" id="total-clients">-</div>
+                <div class="stat-label">Total Clients</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-value" id="vip-clients">-</div>
+                <div class="stat-label">VIP Clients</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🆕</div>
+                <div class="stat-value" id="new-clients">-</div>
+                <div class="stat-label">New This Month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="avg-visit">-</div>
+                <div class="stat-label">Average Visit</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📈</div>
+                <div class="stat-value" id="total-revenue">-</div>
+                <div class="stat-label">Total Revenue</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📉</div>
+                <div class="stat-value" id="total-expenses">-</div>
+                <div class="stat-label">Total Expenses</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💎</div>
+                <div class="stat-value" id="profit">-</div>
+                <div class="stat-label">Profit</div>
+            </div>
+        </div>
+        
+        <!-- Chart Section -->
+        <div class="chart-card">
+            <div class="chart-title">📈 Revenue Trend (Last 30 Days)</div>
+            <canvas id="revenueChart"></canvas>
+        </div>
+        
+        <!-- Two Columns -->
+        <div class="two-columns">
+            <!-- Left Column -->
+            <div>
+                <div class="card">
+                    <div class="card-title">
+                        📅 Today's Appointments
+                        <button class="refresh-btn" onclick="refreshData()">🔄 Refresh</button>
+                    </div>
+                    <div id="appointments-list">
+                        <div class="empty-state">📅 Loading...</div>
+                    </div>
+                </div>
+                
+                <div class="card" style="margin-top: 24px;">
+                    <div class="card-title">
+                        💳 Clients with Outstanding Balance
+                        <a href="/clients" class="view-all">View All →</a>
+                    </div>
+                    <div id="balances-list">
+                        <div class="empty-state">💳 Loading...</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column -->
+            <div>
+                <div class="card">
+                    <div class="card-title">
+                        ⚠️ Clients Needing Attention
+                        <a href="/clients" class="view-all">View All →</a>
+                    </div>
+                    <div id="atrisk-list">
+                        <div class="empty-state">⚠️ Loading...</div>
+                    </div>
+                </div>
+                
+                <div class="card" style="margin-top: 24px;">
+                    <div class="card-title">
+                        💸 Recent Expenses
+                        <a href="/expenses" class="view-all">Add New →</a>
+                    </div>
+                    <div id="expenses-list">
+                        <div class="empty-state">💸 Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let revenueChart = null;
+        
+        async function refreshData() {
+            try {
+                // Parallel loading for better performance
+                const [
+                    statsResponse,
+                    appointmentsResponse,
+                    balancesResponse,
+                    atriskResponse,
+                    expensesResponse
+                ] = await Promise.all([
+                    fetch('/api/dashboard-stats'),
+                    fetch('/api/today-appointments'),
+                    fetch('/api/outstanding-balances'),
+                    fetch('/api/at-risk-clients'),
+                    fetch('/api/recent-expenses')
+                ]);
+                
+                // Dashboard Stats
+                if (statsResponse.ok) {
+                    const stats = await statsResponse.json();
+                    
+                    document.getElementById('today-revenue').textContent = 'KES ' + (stats.today_revenue || 0).toLocaleString();
+                    document.getElementById('today-appointments').textContent = stats.today_appointments || 0;
+                    document.getElementById('total-balance').textContent = 'KES ' + (stats.total_balance || 0).toLocaleString();
+                    document.getElementById('total-revenue').textContent = 'KES ' + (stats.total_revenue || 0).toLocaleString();
+                    document.getElementById('total-expenses').textContent = 'KES ' + (stats.total_expenses || 0).toLocaleString();
+                    document.getElementById('total-clients').textContent = stats.total_clients || 0;
+                    document.getElementById('vip-clients').textContent = stats.vip_count || 0;
+                    document.getElementById('new-clients').textContent = stats.new_this_month || 0;
+                    document.getElementById('avg-visit').textContent = 'KES ' + Math.round(stats.avg_visit || 0).toLocaleString();
+                    
+                    const profit = (stats.total_revenue || 0) - (stats.total_expenses || 0);
+                    const profitElement = document.getElementById('profit');
+                    profitElement.textContent = 'KES ' + profit.toLocaleString();
+                    
+                    // Remove existing classes and add appropriate one
+                    profitElement.classList.remove('stat-positive', 'stat-negative', 'error-value');
+                    if (profit >= 0) {
+                        profitElement.classList.add('stat-positive');
+                    } else {
+                        profitElement.classList.add('stat-negative');
+                    }
+                    
+                    // Update chart if revenue data available
+                    if (stats.revenue_data && revenueChart) {
+                        revenueChart.data.datasets[0].data = stats.revenue_data;
+                        revenueChart.update();
+                    }
+                } else {
+                    showError('stats');
+                }
+                
+                // Today's Appointments
+                if (appointmentsResponse.ok) {
+                    const appointments = await appointmentsResponse.json();
+                    const appointmentsDiv = document.getElementById('appointments-list');
+                    
+                    if (appointments.length === 0) {
+                        appointmentsDiv.innerHTML = '<div class="empty-state">📅 No appointments today 🎉</div>';
+                    } else {
+                        appointmentsDiv.innerHTML = appointments.map(apt => `
+                            <div class="appointment-item">
+                                <div>
+                                    <span class="appointment-time">${escapeHtml(apt.appointment_time || 'Flexible')}</span>
+                                    <span class="appointment-name">${escapeHtml(apt.client_name)}</span>
+                                    <div class="appointment-service">${escapeHtml(apt.service_name)}</div>
+                                </div>
+                                <a href="/client/${apt.client_id}" class="btn-small">View</a>
+                            </div>
+                        `).join('');
+                    }
+                } else {
+                    document.getElementById('appointments-list').innerHTML = '<div class="empty-state">⚠️ Error loading appointments</div>';
+                }
+                
+                // Outstanding Balances
+                if (balancesResponse.ok) {
+                    const balances = await balancesResponse.json();
+                    const balancesDiv = document.getElementById('balances-list');
+                    
+                    if (balances.length === 0) {
+                        balancesDiv.innerHTML = '<div class="empty-state">✅ No outstanding balances</div>';
+                    } else {
+                        balancesDiv.innerHTML = balances.map(b => `
+                            <div class="balance-item">
+                                <div>
+                                    <strong>${escapeHtml(b.client_name)}</strong>
+                                    <div class="expense-category">${escapeHtml(b.client_phone)}</div>
+                                </div>
+                                <div class="balance-amount">KES ${(b.total_balance || 0).toLocaleString()}</div>
+                            </div>
+                        `).join('');
+                    }
+                } else {
+                    document.getElementById('balances-list').innerHTML = '<div class="empty-state">⚠️ Error loading balances</div>';
+                }
+                
+                // At-Risk Clients
+                if (atriskResponse.ok) {
+                    const atrisk = await atriskResponse.json();
+                    const atriskDiv = document.getElementById('atrisk-list');
+                    
+                    if (atrisk.length === 0) {
+                        atriskDiv.innerHTML = '<div class="empty-state">🎉 All clients are active!</div>';
+                    } else {
+                        atriskDiv.innerHTML = atrisk.map(c => `
+                            <div class="client-item">
+                                <div>
+                                    <div class="client-name">${escapeHtml(c.client_name)}</div>
+                                    <div class="expense-category">${escapeHtml(c.client_phone)}</div>
+                                    <div class="expense-category">Last visit: ${c.last_visit || 'Never'}</div>
+                                </div>
+                                <div>
+                                    <span class="client-status status-${(c.retention_status || 'Active').replace(' ', '-')}">${escapeHtml(c.retention_status || 'Active')}</span>
+                                    <a href="/client/${c.id}" class="btn-small" style="margin-left: 8px;">View</a>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                } else {
+                    document.getElementById('atrisk-list').innerHTML = '<div class="empty-state">⚠️ Error loading at-risk clients</div>';
+                }
+                
+                // Recent Expenses
+                if (expensesResponse.ok) {
+                    const expenses = await expensesResponse.json();
+                    const expensesDiv = document.getElementById('expenses-list');
+                    
+                    if (expenses.length === 0) {
+                        expensesDiv.innerHTML = '<div class="empty-state">💸 No expenses recorded yet</div>';
+                    } else {
+                        expensesDiv.innerHTML = expenses.map(e => `
+                            <div class="expense-item">
+                                <div>
+                                    <strong>${escapeHtml(e.category)}</strong>
+                                    <div class="expense-category">${escapeHtml(e.description || 'No description')}</div>
+                                    <div class="expense-category">${escapeHtml(e.expense_date)}</div>
+                                </div>
+                                <div class="balance-amount">KES ${(e.amount || 0).toLocaleString()}</div>
+                            </div>
+                        `).join('');
+                    }
+                } else {
+                    document.getElementById('expenses-list').innerHTML = '<div class="empty-state">⚠️ Error loading expenses</div>';
+                }
+                
+            } catch (error) {
+                console.error('Dashboard error:', error);
+                showError('all');
+            }
+        }
+        
+        function showError(type) {
+            if (type === 'all' || type === 'stats') {
+                const errorElements = ['today-revenue', 'today-appointments', 'total-balance', 'total-revenue', 'total-expenses', 'profit'];
+                errorElements.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.textContent = 'Error';
+                        el.classList.add('error-value');
+                    }
+                });
+            }
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Initialize chart
+        function initChart() {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            revenueChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Daily Revenue (KES)',
+                        data: [],
+                        borderColor: '#D6456F',
+                        backgroundColor: 'rgba(214, 69, 111, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Revenue (KES)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Load data on page load
+        initChart();
+        refreshData();
+        
+        // Auto-refresh every 60 seconds
+        setInterval(refreshData, 60000);
+    </script>
+</body>
+</html>

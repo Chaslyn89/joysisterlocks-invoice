@@ -13,39 +13,167 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #D6456F 0%, #C59B9B 100%);
             min-height: 100vh;
             padding: 20px;
         }
         
         .container {
-            max-width: 600px;
+            max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 24px;
         }
         
-        .header {
-            background: #2d1b4e;
-            color: white;
-            padding: 30px;
+        /* Sidebar Styles */
+        .sidebar {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            height: fit-content;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar h3 {
+            color: #D6456F;
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #D6456F;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: #FDF8F9;
+            border-radius: 12px;
+            padding: 12px;
             text-align: center;
         }
         
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #D6456F;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: #5A4A52;
+            margin-top: 4px;
+        }
+        
+        .client-list {
+            list-style: none;
+            margin-bottom: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .client-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .client-list li:hover {
+            background: #FDF8F9;
+            padding-left: 8px;
+        }
+        
+        .client-name {
+            font-weight: 600;
+            color: #4A2B42;
+            font-size: 13px;
+        }
+        
+        .client-phone {
+            font-size: 11px;
+            color: #5A4A52;
+        }
+        
+        .sidebar-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #D6456F;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        
+        .sidebar-btn:hover {
+            background: #b83b5e;
+        }
+        
+        /* Client Summary Card */
+        .client-summary {
+            background: #FDF8F9;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .client-summary.show {
+            display: block;
+        }
+        
+        .summary-title {
+            font-weight: bold;
+            color: #4A2B42;
+            margin-bottom: 10px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            padding: 5px 0;
+        }
+        
+        .vip-badge {
+            background: #FFD70020;
+            color: #B8860B;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        /* Main Form Styles */
+        .form-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
         .header h1 {
+            color: #D6456F;
             font-size: 28px;
             margin-bottom: 5px;
         }
         
         .header p {
-            opacity: 0.8;
+            color: #5A4A52;
             font-size: 14px;
-        }
-        
-        .form-container {
-            padding: 30px;
         }
         
         .form-group {
@@ -56,8 +184,13 @@
             display: block;
             font-weight: 600;
             margin-bottom: 8px;
-            color: #333;
+            color: #4A2B42;
             font-size: 14px;
+        }
+        
+        .label-required::after {
+            content: " *";
+            color: #D6456F;
         }
         
         input, select, textarea {
@@ -71,12 +204,11 @@
         
         input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: #764ba2;
+            border-color: #D6456F;
         }
         
-        textarea {
-            resize: vertical;
-            min-height: 80px;
+        input:invalid {
+            border-color: #D6456F;
         }
         
         .row {
@@ -91,7 +223,7 @@
         button {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #D6456F 0%, #C59B9B 100%);
             color: white;
             border: none;
             border-radius: 10px;
@@ -101,57 +233,156 @@
             transition: transform 0.2s;
         }
         
-        button:hover {
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        button:hover:not(:disabled) {
             transform: translateY(-2px);
+        }
+        
+        .search-result {
+            margin-top: 5px;
+            font-size: 12px;
+        }
+        
+        .search-result a {
+            color: #D6456F;
+            text-decoration: none;
         }
         
         .service-info {
             font-size: 12px;
-            color: #666;
+            color: #5A4A52;
             margin-top: 5px;
         }
         
-        .footer {
-            background: #f8f9fa;
-            padding: 15px 30px;
+        .live-total {
+            background: #FDF8F9;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
             text-align: center;
-            font-size: 12px;
-            color: #666;
+        }
+        
+        .live-total span {
+            font-weight: bold;
+            color: #D6456F;
+            font-size: 18px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                order: 2;
+            }
+            .form-container {
+                order: 1;
+            }
+            .row {
+                flex-direction: column;
+                gap: 0;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>💇🏾‍♀️ Joy Sisterlocks</h1>
-            <p>Professional Sisterlocks & Microlocs Services</p>
-            <p style="font-size: 12px; margin-top: 10px;">📍 Nairobi, Kenya</p>
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h3>📊 Quick Stats</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.total_clients if stats else 0 }}</div>
+                    <div class="stat-label">Total Clients</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.vip_count if stats else 0 }}</div>
+                    <div class="stat-label">VIP Clients</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ stats.new_this_month if stats else 0 }}</div>
+                    <div class="stat-label">New This Month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">KES {{ "{:,.0f}".format(stats.total_revenue) if stats else 0 }}</div>
+                    <div class="stat-label">Total Revenue</div>
+                </div>
+            </div>
+            
+            <h3>📝 Recent Clients</h3>
+            {% if recent_clients %}
+                <ul class="client-list">
+                {% for client in recent_clients %}
+                    <li onclick='fillClientForm(
+                        {{ client.client_name|tojson }},
+                        {{ client.client_phone|tojson }},
+                        {{ (client.client_email or "")|tojson }}
+                    )'>
+                        <div class="client-name">{{ client.client_name }}</div>
+                        <div class="client-phone">{{ client.client_phone }}</div>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p style="font-size: 12px; color: #5A4A52;">No clients yet. Create your first invoice!</p>
+            {% endif %}
+            
+            <a href="/clients" class="sidebar-btn">🔍 Manage All Clients</a>
+            
+            <!-- Client Summary Card -->
+            <div id="client-summary" class="client-summary">
+                <div class="summary-title">👤 Client Summary</div>
+                <div id="summary-content"></div>
+            </div>
         </div>
         
+        <!-- Main Form -->
         <div class="form-container">
-            <form method="POST">
+            <div class="header">
+                <h1>💇🏾‍♀️ Joy Sisterlocks</h1>
+                <p>Professional Sisterlocks & Microlocs Services</p>
+                <p style="font-size: 12px;">📍 Nairobi, Kenya</p>
+            </div>
+            
+            <div class="live-total" id="live-total">
+                💰 Total: <span id="total-amount">0</span> KES | 
+                Balance: <span id="balance-amount">0</span> KES
+            </div>
+            
+            <form method="POST" id="invoice-form">
                 <div class="row">
                     <div class="form-group">
-                        <label>Client Name *</label>
-                        <input type="text" name="client_name" required placeholder="Full name">
+                        <label class="label-required">Client Name</label>
+                        <input type="text" name="client_name" id="client_name" required placeholder="Full name">
                     </div>
                     <div class="form-group">
-                        <label>Phone Number *</label>
-                        <input type="tel" name="client_phone" required placeholder="0712 345 678">
+                        <label class="label-required">Phone Number</label>
+                        <input type="tel" name="client_phone" id="client_phone" required 
+                               placeholder="0712 345 678"
+                               pattern="^(07|01|\+254)[0-9]{8,9}$"
+                               title="Enter a valid Kenyan phone number (e.g., 0712345678)">
+                        <div class="search-result" id="search-result"></div>
                     </div>
                 </div>
                 
                 <div class="form-group">
                     <label>Email (optional)</label>
-                    <input type="email" name="client_email" placeholder="client@example.com">
+                    <input type="email" name="client_email" id="client_email" placeholder="client@example.com">
                 </div>
                 
                 <div class="form-group">
-                    <label>Service *</label>
-                    <select name="service" required>
+                    <label class="label-required">Service</label>
+                    <select name="service" id="service" required>
                         <option value="">Select a service</option>
                         {% for key, service in services.items() %}
-                        <option value="{{ key }}">{{ service.name }} - KES {{ "{:,}".format(service.price) }}</option>
+                        <option value="{{ key }}" data-price="{{ service.price }}">
+                            {{ service.name }} - KES {{ "{:,}".format(service.price) }}
+                        </option>
                         {% endfor %}
                     </select>
                     <div class="service-info">Prices include VAT | Retie services are recommended every 4-6 weeks</div>
@@ -169,7 +400,7 @@
                     </div>
                     <div class="form-group">
                         <label>Payment Method</label>
-                        <select name="payment_method">
+                        <select name="payment_method" id="payment_method">
                             <option value="Cash">Cash</option>
                             <option value="M-Pesa">M-Pesa</option>
                             <option value="Bank Transfer">Bank Transfer</option>
@@ -180,7 +411,11 @@
                 <div class="row">
                     <div class="form-group">
                         <label>Amount Paid (KES)</label>
-                        <input type="number" name="amount_paid" value="0" placeholder="0">
+                        <input type="number" name="amount_paid" id="amount_paid" value="0" min="0" step="100">
+                    </div>
+                    <div class="form-group" id="mpesa-field" style="display: none;">
+                        <label>M-Pesa Transaction Code</label>
+                        <input type="text" name="mpesa_code" placeholder="e.g., SDR8T5Y6Z">
                     </div>
                 </div>
                 
@@ -189,13 +424,164 @@
                     <textarea name="notes" placeholder="Next appointment, aftercare instructions, etc."></textarea>
                 </div>
                 
-                <button type="submit">📄 Generate Invoice PDF</button>
+                <button type="submit" id="submit-btn">📄 Generate Invoice PDF</button>
             </form>
         </div>
-        
-        <div class="footer">
-            <p>Joy Sisterlocks | Nairobi, Kenya | WhatsApp: [Your Number]</p>
-        </div>
     </div>
+    
+    <script>
+        // Service prices mapping
+        const servicePrices = {};
+        document.querySelectorAll('#service option').forEach(opt => {
+            if (opt.value) {
+                servicePrices[opt.value] = parseInt(opt.dataset.price) || 0;
+            }
+        });
+        
+        // Update live total
+        function updateLiveTotal() {
+            const service = document.getElementById('service').value;
+            const total = servicePrices[service] || 0;
+            const amountPaid = parseInt(document.getElementById('amount_paid').value) || 0;
+            const balance = total - amountPaid;
+            
+            document.getElementById('total-amount').textContent = total.toLocaleString();
+            document.getElementById('balance-amount').textContent = balance.toLocaleString();
+            
+            // Change color based on balance
+            const balanceSpan = document.getElementById('balance-amount');
+            if (balance > 0) {
+                balanceSpan.style.color = '#D6456F';
+            } else {
+                balanceSpan.style.color = '#4CAF50';
+            }
+        }
+        
+        // Auto-fill amount paid when service changes
+        function autoFillAmount() {
+            const service = document.getElementById('service').value;
+            const total = servicePrices[service] || 0;
+            const amountPaidInput = document.getElementById('amount_paid');
+            if (amountPaidInput.value == 0 || amountPaidInput.value == '') {
+                amountPaidInput.value = total;
+            }
+            updateLiveTotal();
+        }
+        
+        // Show/hide M-Pesa field
+        function toggleMpesaField() {
+            const paymentMethod = document.getElementById('payment_method').value;
+            const mpesaField = document.getElementById('mpesa-field');
+            mpesaField.style.display = paymentMethod === 'M-Pesa' ? 'block' : 'none';
+        }
+        
+        // Fill client form (XSS-safe with tojson)
+        function fillClientForm(name, phone, email) {
+            document.getElementById('client_name').value = name;
+            document.getElementById('client_phone').value = phone;
+            if (email) {
+                document.getElementById('client_email').value = email;
+            }
+            // Clear search result
+            document.getElementById('search-result').innerHTML = '';
+            
+            // Fetch client summary
+            fetch(`/api/search?q=${encodeURIComponent(phone)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const client = data[0];
+                        showClientSummary(client);
+                    }
+                });
+        }
+        
+        function showClientSummary(client) {
+            const summaryDiv = document.getElementById('client-summary');
+            const contentDiv = document.getElementById('summary-content');
+            
+            const categoryClass = client.category === 'VIP' ? 'vip-badge' : '';
+            const categoryHtml = client.category === 'VIP' ? '<span class="vip-badge">⭐ VIP Client</span>' : '';
+            
+            contentDiv.innerHTML = `
+                <div class="summary-row">
+                    <span>📞 ${escapeHtml(client.client_phone)}</span>
+                </div>
+                <div class="summary-row">
+                    <span>📊 Visits: ${client.total_visits || 0}</span>
+                    <span>💰 Spent: KES ${(client.total_spent || 0).toLocaleString()}</span>
+                </div>
+                <div class="summary-row">
+                    <span>📅 Last: ${client.last_visit || 'Never'}</span>
+                    ${categoryHtml}
+                </div>
+                ${(client.total_visits || 0) % 5 === 4 ? `
+                <div class="summary-row" style="color: #D6456F; margin-top: 8px;">
+                    🎉 1 more visit until free wash & style!
+                </div>
+                ` : ''}
+            `;
+            summaryDiv.classList.add('show');
+        }
+        
+        // Search as you type
+        const phoneInput = document.getElementById('client_phone');
+        const searchResult = document.getElementById('search-result');
+        let searchTimeout;
+        
+        phoneInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            const phone = this.value;
+            
+            if (phone.length >= 4) {
+                searchTimeout = setTimeout(() => {
+                    fetch(`/api/search?q=${encodeURIComponent(phone)}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.length > 0) {
+                                const client = data[0];
+                                searchResult.innerHTML = `
+                                    <a href="#" onclick="fillClientForm('${escapeHtml(client.client_name)}', '${escapeHtml(client.client_phone)}', '${escapeHtml(client.client_email || '')}'); return false;">
+                                        👤 Existing client: ${escapeHtml(client.client_name)}<br>
+                                        <small>Click to load</small>
+                                    </a>
+                                `;
+                            } else {
+                                searchResult.innerHTML = '';
+                                document.getElementById('client-summary').classList.remove('show');
+                            }
+                        });
+                }, 500);
+            } else {
+                searchResult.innerHTML = '';
+            }
+        });
+        
+        // Form submission with loading state
+        const form = document.getElementById('invoice-form');
+        const submitBtn = document.getElementById('submit-btn');
+        
+        form.addEventListener('submit', function(e) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Generating PDF, please wait...';
+            // Form will submit normally
+        });
+        
+        // Event listeners
+        document.getElementById('service').addEventListener('change', autoFillAmount);
+        document.getElementById('amount_paid').addEventListener('input', updateLiveTotal);
+        document.getElementById('payment_method').addEventListener('change', toggleMpesaField);
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Initialize
+        updateLiveTotal();
+        toggleMpesaField();
+    </script>
 </body>
 </html>

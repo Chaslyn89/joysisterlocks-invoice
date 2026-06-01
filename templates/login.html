@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Joy Sisterlocks</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #D6456F 0%, #C59B9B 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        
+        .login-card h1 {
+            color: #D6456F;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .login-card p {
+            color: #5A4A52;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #4A2B42;
+            margin-bottom: 8px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #D6456F;
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: #D6456F;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .btn-login:hover {
+            background: #b83b5e;
+        }
+        
+        .error {
+            background: #D6456F20;
+            color: #D6456F;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+        
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #5A4A52;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h1>🔐 Joy Sisterlocks</h1>
+        <p>Login to access your dashboard</p>
+        
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+        
+        <form method="POST">
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Enter admin password" required>
+            </div>
+            <button type="submit" class="btn-login">Login →</button>
+        </form>
+        
+        <div class="footer">
+            <p>Secure access to business management</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Management - Joy Sisterlocks</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #D6456F 0%, #C59B9B 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 24px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #D6456F;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #5A4A52;
+            font-size: 14px;
+        }
+        
+        .search-box {
+            max-width: 500px;
+            margin: 20px auto 0;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 14px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #D6456F;
+            box-shadow: 0 0 0 3px rgba(214, 69, 111, 0.1);
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            padding: 12px 24px;
+            background: white;
+            border: none;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #4A2B42;
+        }
+        
+        .tab-btn.active {
+            background: #D6456F;
+            color: white;
+        }
+        
+        .tab-btn:hover:not(.active) {
+            background: #FDF8F9;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .clients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        
+        .client-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            border: 1px solid #eee;
+        }
+        
+        .client-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .client-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #4A2B42;
+            margin-bottom: 5px;
+        }
+        
+        .client-phone {
+            color: #5A4A52;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .client-stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #eee;
+        }
+        
+        .stat {
+            font-size: 12px;
+        }
+        
+        .stat-label {
+            color: #5A4A52;
+        }
+        
+        .stat-value {
+            font-weight: 700;
+            color: #D6456F;
+        }
+        
+        .category-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        
+        .category-VIP {
+            background: #FFD70020;
+            color: #B8860B;
+        }
+        
+        .category-Regular {
+            background: #D6456F20;
+            color: #D6456F;
+        }
+        
+        .category-New {
+            background: #C59B9B20;
+            color: #8B5E5E;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .status-Active {
+            background: #4CAF5020;
+            color: #4CAF50;
+        }
+        
+        .status-At-Risk {
+            background: #FF980020;
+            color: #FF9800;
+        }
+        
+        .status-Inactive {
+            background: #9E9E9E20;
+            color: #9E9E9E;
+        }
+        
+        .status-Lost {
+            background: #D6456F20;
+            color: #D6456F;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-top: 24px;
+            padding: 12px 24px;
+            background: white;
+            color: #D6456F;
+            text-decoration: none;
+            border-radius: 40px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: #FDF8F9;
+            transform: translateY(-2px);
+        }
+        
+        .stats-summary {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .stat-large {
+            text-align: center;
+        }
+        
+        .stat-large-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #D6456F;
+        }
+        
+        .stat-large-label {
+            font-size: 12px;
+            color: #5A4A52;
+        }
+        
+        .empty-state {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            color: #5A4A52;
+        }
+        
+        @media (max-width: 768px) {
+            .clients-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👥 Client Management</h1>
+            <p>Manage your sisterlocks clients, view history, and track preferences</p>
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="🔍 Search by name or phone number...">
+            </div>
+        </div>
+        
+        <div class="stats-summary" id="stats-summary">
+            <div class="stat-large">
+                <div class="stat-large-number" id="total-clients">-</div>
+                <div class="stat-large-label">Total Clients</div>
+            </div>
+            <div class="stat-large">
+                <div class="stat-large-number" id="vip-clients">-</div>
+                <div class="stat-large-label">VIP Clients</div>
+            </div>
+            <div class="stat-large">
+                <div class="stat-large-number" id="total-revenue">-</div>
+                <div class="stat-large-label">Total Revenue (KES)</div>
+            </div>
+            <div class="stat-large">
+                <div class="stat-large-number" id="avg-visit">-</div>
+                <div class="stat-large-label">Avg Visit (KES)</div>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="recent">🕐 Recent Clients</button>
+            <button class="tab-btn" data-tab="top">🏆 Top Spenders</button>
+            <button class="tab-btn" data-tab="vip">⭐ VIP Clients</button>
+            <button class="tab-btn" data-tab="atrisk">⚠️ At Risk</button>
+        </div>
+        
+        <div id="recent-tab" class="tab-content active">
+            <div class="clients-grid" id="recent-list">
+                <div class="loading">Loading...</div>
+            </div>
+        </div>
+        
+        <div id="top-tab" class="tab-content">
+            <div class="clients-grid" id="top-list">
+                <div class="loading">Loading...</div>
+            </div>
+        </div>
+        
+        <div id="vip-tab" class="tab-content">
+            <div class="clients-grid" id="vip-list">
+                <div class="loading">Loading...</div>
+            </div>
+        </div>
+        
+        <div id="atrisk-tab" class="tab-content">
+            <div class="clients-grid" id="atrisk-list">
+                <div class="loading">Loading...</div>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="/" class="back-btn">← Back to Invoice Generator</a>
+            <a href="/dashboard" class="back-btn" style="margin-left: 10px;">📊 Dashboard</a>
+        </div>
+    </div>
+    
+    <script>
+        let allClients = [];
+        
+        // Load stats
+        fetch('/api/stats')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('total-clients').textContent = data.total_clients || 0;
+                document.getElementById('vip-clients').textContent = data.vip_count || 0;
+                document.getElementById('total-revenue').textContent = (data.gross_revenue || 0).toLocaleString();
+                document.getElementById('avg-visit').textContent = Math.round(data.avg_visit || 0).toLocaleString();
+            })
+            .catch(err => console.error('Error loading stats:', err));
+        
+        function loadRecent() {
+            fetch('/api/recent?limit=20')
+                .then(res => res.json())
+                .then(data => {
+                    allClients = data;
+                    renderClientList(data, 'recent-list');
+                })
+                .catch(err => {
+                    document.getElementById('recent-list').innerHTML = '<div class="empty-state">⚠️ Error loading clients</div>';
+                });
+        }
+        
+        function loadTop() {
+            fetch('/api/top?limit=20')
+                .then(res => res.json())
+                .then(data => {
+                    renderClientList(data, 'top-list');
+                })
+                .catch(err => {
+                    document.getElementById('top-list').innerHTML = '<div class="empty-state">⚠️ Error loading top clients</div>';
+                });
+        }
+        
+        function loadVIP() {
+            fetch('/api/top?limit=20')
+                .then(res => res.json())
+                .then(data => {
+                    const vipClients = data.filter(c => c.category === 'VIP');
+                    renderClientList(vipClients, 'vip-list');
+                })
+                .catch(err => {
+                    document.getElementById('vip-list').innerHTML = '<div class="empty-state">⚠️ Error loading VIP clients</div>';
+                });
+        }
+        
+        function loadAtRisk() {
+            fetch('/api/at-risk-clients')
+                .then(res => res.json())
+                .then(data => {
+                    renderClientList(data, 'atrisk-list');
+                })
+                .catch(err => {
+                    document.getElementById('atrisk-list').innerHTML = '<div class="empty-state">⚠️ Error loading at-risk clients</div>';
+                });
+        }
+        
+        function renderClientList(clients, containerId) {
+            const container = document.getElementById(containerId);
+            if (!clients || clients.length === 0) {
+                container.innerHTML = '<div class="empty-state">👥 No clients found</div>';
+                return;
+            }
+            
+            container.innerHTML = clients.map(client => `
+                <div class="client-card" onclick="window.location.href='/client/${client.id}'">
+                    <div class="client-name">${escapeHtml(client.client_name)}</div>
+                    <div class="client-phone">📞 ${escapeHtml(client.client_phone)}</div>
+                    <div>
+                        <span class="category-badge category-${client.category || 'New'}">${client.category || 'New'} Client</span>
+                        <span class="status-badge status-${client.retention_status || 'Active'}">${client.retention_status || 'Active'}</span>
+                    </div>
+                    <div class="client-stats">
+                        <div class="stat">
+                            <span class="stat-label">Visits:</span>
+                            <span class="stat-value">${client.total_visits || 0}</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Spent:</span>
+                            <span class="stat-value">KES ${(client.gross_spent || 0).toLocaleString()}</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Last:</span>
+                            <span class="stat-value">${client.last_visit || 'Never'}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Search functionality
+        const searchInput = document.getElementById('search-input');
+        let searchTimeout;
+        
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            const query = this.value.trim();
+            
+            if (query.length >= 2) {
+                searchTimeout = setTimeout(() => {
+                    fetch(`/api/search?q=${encodeURIComponent(query)}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            renderClientList(data, 'recent-list');
+                            document.getElementById('top-list').innerHTML = '';
+                            document.getElementById('vip-list').innerHTML = '';
+                            document.getElementById('atrisk-list').innerHTML = '';
+                            // Deactivate tabs
+                            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                        })
+                        .catch(err => {
+                            console.error('Search error:', err);
+                        });
+                }, 300);
+            } else if (query.length === 0) {
+                loadRecent();
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelector('[data-tab="recent"]').classList.add('active');
+            }
+        });
+        
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tab = this.dataset.tab;
+                
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.getElementById(`${tab}-tab`).classList.add('active');
+                
+                if (tab === 'recent') loadRecent();
+                if (tab === 'top') loadTop();
+                if (tab === 'vip') loadVIP();
+                if (tab === 'atrisk') loadAtRisk();
+                
+                // Clear search
+                searchInput.value = '';
+            });
+        });
+        
+        // Initial load
+        loadRecent();
+    </script>
+</body>
+</html>

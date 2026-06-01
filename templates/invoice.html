@@ -6,98 +6,112 @@
     <style>
         @page {
             size: A4;
-            margin: 2cm;
+            margin: 1.5cm;
         }
         
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
-            font-size: 12px;
+            font-size: 11px;
             color: #333;
-            line-height: 1.5;
+            line-height: 1.4;
         }
         
         .invoice-container {
             max-width: 100%;
         }
         
-        /* Header Section */
-        .header {
-            text-align: center;
-            border-bottom: 3px solid #2d1b4e;
-            padding-bottom: 20px;
-            margin-bottom: 20px;
+        /* Header Section - Table based for PDF stability */
+        .header-table {
+            width: 100%;
+            border-bottom: 2px solid #2d1b4e;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
         }
         
         .business-name {
-            font-size: 28px;
+            font-size: 22px;
             font-weight: bold;
             color: #2d1b4e;
-            margin-bottom: 5px;
         }
         
         .business-tagline {
-            font-size: 12px;
+            font-size: 10px;
             color: #666;
         }
         
         /* Invoice Title */
         .invoice-title {
             text-align: center;
-            margin: 20px 0;
+            margin: 15px 0;
         }
         
         .invoice-title h2 {
             background: #2d1b4e;
             color: white;
             display: inline-block;
-            padding: 8px 25px;
-            border-radius: 20px;
-            font-size: 18px;
+            padding: 5px 20px;
+            border-radius: 15px;
+            font-size: 14px;
         }
         
-        /* Info Grid */
-        .info-grid {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            padding: 15px;
+        /* Info Grid - Table based for PDF stability */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
             background: #f8f9fa;
-            border-radius: 10px;
         }
         
-        .info-box {
-            flex: 1;
+        .info-table td {
+            padding: 8px;
+            vertical-align: top;
+            width: 33%;
         }
         
-        .info-box h4 {
+        .info-table h4 {
             color: #2d1b4e;
-            margin-bottom: 8px;
-            font-size: 12px;
+            margin-bottom: 5px;
+            font-size: 11px;
         }
         
-        .info-box p {
-            margin: 3px 0;
-            font-size: 11px;
+        .info-table p {
+            margin: 2px 0;
+            font-size: 10px;
+        }
+        
+        /* QR Code Section */
+        .qr-section {
+            text-align: center;
+            margin: 10px 0;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .qr-section img {
+            max-width: 80px;
+            height: auto;
         }
         
         /* Services Table */
         .services-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin: 15px 0;
         }
         
         .services-table th {
             background: #2d1b4e;
             color: white;
-            padding: 12px;
+            padding: 8px;
             text-align: left;
-            font-weight: normal;
+            font-size: 10px;
         }
         
         .services-table td {
-            padding: 12px;
+            padding: 8px;
             border-bottom: 1px solid #e0e0e0;
+            font-size: 10px;
         }
         
         .services-table .total-row {
@@ -107,90 +121,141 @@
         
         /* Payment Section */
         .payment-summary {
-            margin: 20px 0;
-            padding: 15px;
+            margin: 15px 0;
+            padding: 10px;
             background: #f8f9fa;
-            border-radius: 10px;
+            border-radius: 8px;
         }
         
         .payment-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
+            display: table;
+            width: 100%;
+            padding: 5px 0;
+        }
+        
+        .payment-row span:first-child {
+            display: table-cell;
+            text-align: left;
+        }
+        
+        .payment-row span:last-child {
+            display: table-cell;
+            text-align: right;
         }
         
         .payment-total {
-            font-size: 16px;
+            font-size: 12px;
             font-weight: bold;
             color: #2d1b4e;
-            border-top: 2px solid #ddd;
-            padding-top: 10px;
+            border-top: 1px solid #ddd;
             margin-top: 5px;
+            padding-top: 5px;
+        }
+        
+        /* Tax Section */
+        .tax-section {
+            margin: 10px 0;
+            padding: 8px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            font-size: 9px;
+        }
+        
+        /* Loyalty Section - Minimal for PDF */
+        .loyalty-section {
+            margin: 15px 0;
+            padding: 8px;
+            background: #2d1b4e10;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 9px;
         }
         
         /* Notes Section */
         .notes {
-            margin: 20px 0;
-            padding: 15px;
+            margin: 15px 0;
+            padding: 10px;
             background: #fff8e7;
-            border-left: 4px solid #ffc107;
-            font-size: 11px;
+            border-left: 3px solid #ffc107;
+            font-size: 9px;
         }
         
         /* Footer */
         .footer {
             text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
+            margin-top: 25px;
+            padding-top: 10px;
             border-top: 1px solid #ddd;
-            font-size: 10px;
+            font-size: 8px;
             color: #999;
         }
         
         .thank-you {
             text-align: center;
-            margin: 20px 0;
-            font-size: 14px;
+            margin: 15px 0;
+            font-size: 11px;
             font-weight: bold;
             color: #2d1b4e;
+        }
+        
+        .mpesa-code {
+            background: #25D36610;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 9px;
         }
     </style>
 </head>
 <body>
     <div class="invoice-container">
         <!-- Header -->
-        <div class="header">
-            <div class="business-name">💇🏾‍♀️ JOY SISTERLOCKS</div>
-            <div class="business-tagline">Professional Sisterlocks & Microlocs Services</div>
-            <div class="business-tagline">📍 Nairobi, Kenya | 📞 +254 XXX XXX XXX</div>
-        </div>
+        <table class="header-table">
+            <tr>
+                <td style="text-align: left;">
+                    <div class="business-name">💇🏾‍♀️ {{ business.name }}</div>
+                    <div class="business-tagline">Professional Sisterlocks & Microlocs Services</div>
+                    <div class="business-tagline">📍 {{ business.location }} | 📞 {{ business.phone }}</div>
+                </td>
+            </tr>
+        </table>
         
         <!-- Invoice Title -->
         <div class="invoice-title">
             <h2>TAX INVOICE</h2>
         </div>
         
-        <!-- Info Grid -->
-        <div class="info-grid">
-            <div class="info-box">
-                <h4>INVOICE DETAILS</h4>
-                <p>Invoice No: {{ invoice_number }}</p>
-                <p>Date: {{ date }}</p>
-            </div>
-            <div class="info-box">
-                <h4>CLIENT DETAILS</h4>
-                <p><strong>{{ client_name }}</strong></p>
-                <p>📞 {{ client_phone }}</p>
-                {% if client_email %}
-                <p>📧 {{ client_email }}</p>
-                {% endif %}
-            </div>
-            <div class="info-box">
-                <h4>APPOINTMENT</h4>
-                <p>📅 {{ appointment_date if appointment_date else "To be scheduled" }}</p>
-                <p>👩🏾‍🦱 Stylist: {{ stylist_name }}</p>
-            </div>
+        <!-- Info Grid - Table based -->
+        <table class="info-table">
+            <tr>
+                <td>
+                    <h4>INVOICE DETAILS</h4>
+                    <p>Invoice No: {{ invoice_number }}</p>
+                    <p>Date: {{ date }}</p>
+                </td>
+                <td>
+                    <h4>CLIENT DETAILS</h4>
+                    <p><strong>{{ client_name }}</strong></p>
+                    <p>📞 {{ client_phone }}</p>
+                    {% if client_email %}
+                    <p>📧 {{ client_email }}</p>
+                    {% endif %}
+                </td>
+                <td>
+                    <h4>APPOINTMENT</h4>
+                    <p>📅 {{ appointment_date if appointment_date else "To be scheduled" }}</p>
+                    <p>👩🏾‍🦱 Stylist: {{ stylist_name }}</p>
+                </td>
+            </tr>
+        </table>
+        
+        <!-- QR Code Section - Real QR -->
+        {% if qr_code_url %}
+        <div class="qr-section">
+            <img src="{{ qr_code_url }}" alt="WhatsApp QR Code">
+            <p style="font-size: 8px; margin-top: 3px;">Scan to book your next appointment on WhatsApp</p>
         </div>
+        {% endif %}
         
         <!-- Services Table -->
         <table class="services-table">
@@ -207,13 +272,26 @@
                         {% if service_details %}
                         <br><small style="color: #666;">{{ service_details }}</small>
                         {% endif %}
+                        {% if mpesa_code %}
+                        <br><small class="mpesa-code">💳 M-Pesa: {{ mpesa_code }}</small>
+                        {% endif %}
                     </td>
                     <td style="text-align: right;">{{ "{:,.0f}".format(total) }}</td>
                 </tr>
                 <tr class="total-row">
-                    <td style="font-weight: bold;">TOTAL</td>
+                    <td style="font-weight: bold;">SUBTOTAL</td>
                     <td style="text-align: right; font-weight: bold;">KES {{ "{:,.0f}".format(total) }}</td>
                 </tr>
+                {% if vat_amount and vat_amount > 0 %}
+                <tr class="total-row">
+                    <td style="font-weight: bold;">VAT (16%)</td>
+                    <td style="text-align: right; font-weight: bold;">KES {{ "{:,.0f}".format(vat_amount) }}</td>
+                </tr>
+                <tr class="total-row">
+                    <td style="font-weight: bold;">TOTAL (incl. VAT)</td>
+                    <td style="text-align: right; font-weight: bold;">KES {{ "{:,.0f}".format(total_with_vat) }}</td>
+                </tr>
+                {% endif %}
             </tbody>
         </table>
         
@@ -231,10 +309,29 @@
                 <span>Payment Method:</span>
                 <span>{{ payment_method if payment_method else "—" }}</span>
             </div>
+            {% if mpesa_code %}
+            <div class="payment-row">
+                <span>M-Pesa Code:</span>
+                <span><strong>{{ mpesa_code }}</strong></span>
+            </div>
+            {% endif %}
             <div class="payment-row payment-total">
                 <span>Balance Due:</span>
                 <span>KES {{ "{:,.0f}".format(balance) }}</span>
             </div>
+        </div>
+        
+        <!-- Tax Info -->
+        <div class="tax-section">
+            <strong>📋 Tax Information:</strong><br>
+            This is a tax invoice for services rendered. VAT is included where applicable.
+            ETR Registration: Pending
+        </div>
+        
+        <!-- Loyalty Section - Minimal -->
+        <div class="loyalty-section">
+            <div class="loyalty-stars">{{ loyalty_stars }}</div>
+            <p>{{ reward_message }}</p>
         </div>
         
         <!-- Notes -->
@@ -245,7 +342,7 @@
         </div>
         {% endif %}
         
-        <!-- Aftercare (standard for sisterlocs clients) -->
+        <!-- Aftercare -->
         <div class="notes" style="background: #e8f5e9; border-left-color: #4caf50;">
             <strong>💆🏾‍♀️ Aftercare Reminder:</strong><br>
             • Next retie recommended in 4-6 weeks<br>
@@ -255,12 +352,13 @@
         </div>
         
         <div class="thank-you">
-            Thank you for choosing Joy Sisterlocks! ✨
+            Thank you for choosing {{ business.name }}! ✨
         </div>
         
         <div class="footer">
-            <p>Joy Sisterlocks | Follow us on Instagram @joysisterlocks | WhatsApp: +254 XXX XXX XXX</p>
+            <p>{{ business.name }} | Follow us on Instagram {{ business.instagram }} | WhatsApp: {{ business.phone }}</p>
             <p>This is a computer-generated invoice. No signature required.</p>
+            <p>⭐ Every 5th visit gets a FREE Wash & Style! ⭐</p>
         </div>
     </div>
 </body>

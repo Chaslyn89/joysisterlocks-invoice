@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ profile.client.client_name }} - Client Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #D6456F 0%, #C59B9B 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        /* Header Section */
+        .profile-header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .profile-name {
+            font-size: 32px;
+            color: #4A2B42;
+            margin-bottom: 5px;
+        }
+        
+        .profile-contact {
+            color: #5A4A52;
+            margin-bottom: 15px;
+        }
+        
+        .category-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        
+        .category-VIP {
+            background: #FFD70020;
+            color: #B8860B;
+        }
+        
+        .category-Regular {
+            background: #D6456F20;
+            color: #D6456F;
+        }
+        
+        .category-New {
+            background: #C59B9B20;
+            color: #8B5E5E;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .status-Active {
+            background: #4CAF5020;
+            color: #4CAF50;
+        }
+        
+        .status-At-Risk {
+            background: #FF980020;
+            color: #FF9800;
+        }
+        
+        .status-Inactive {
+            background: #9E9E9E20;
+            color: #9E9E9E;
+        }
+        
+        .status-Lost {
+            background: #D6456F20;
+            color: #D6456F;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: #FDF8F9;
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #D6456F;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #5A4A52;
+            margin-top: 5px;
+        }
+        
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            color: #4A2B42;
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #D6456F;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        /* Service History Table */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .history-table th {
+            text-align: left;
+            padding: 12px 8px;
+            background: #FDF8F9;
+            color: #4A2B42;
+            font-size: 13px;
+        }
+        
+        .history-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+        
+        .history-table tr:hover {
+            background: #FDF8F9;
+        }
+        
+        .balance-positive {
+            color: #D6456F;
+            font-weight: 600;
+        }
+        
+        .balance-zero {
+            color: #4CAF50;
+        }
+        
+        /* Notes Section */
+        .notes-box {
+            background: #FDF8F9;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+        
+        .add-note-btn, .add-allergy-btn {
+            background: #D6456F;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .add-note-btn:hover, .add-allergy-btn:hover {
+            background: #b83b5e;
+        }
+        
+        .allergy-item {
+            background: #FFF3E0;
+            border-left: 4px solid #FF9800;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+        
+        .allergy-type {
+            font-weight: bold;
+            color: #E65100;
+        }
+        
+        /* Appointment Item */
+        .appointment-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .appointment-date {
+            background: #D6456F;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        /* Buttons */
+        .back-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 12px 24px;
+            background: white;
+            color: #D6456F;
+            text-decoration: none;
+            border-radius: 40px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: #FDF8F9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            background: #D6456F;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .modal-content h3 {
+            margin-bottom: 15px;
+            color: #4A2B42;
+        }
+        
+        .modal-content input, .modal-content select, .modal-content textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .modal-buttons button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .modal-save {
+            background: #D6456F;
+            color: white;
+        }
+        
+        .modal-cancel {
+            background: #eee;
+            color: #333;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #5A4A52;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .history-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <h1 class="profile-name">👤 {{ profile.client.client_name }}</h1>
+            <div class="profile-contact">
+                📞 {{ profile.client.client_phone }}<br>
+                {% if profile.client.client_email %}
+                📧 {{ profile.client.client_email }}
+                {% endif %}
+            </div>
+            <div>
+                <span class="category-badge category-{{ profile.client.category }}">
+                    {{ profile.client.category }} Client
+                </span>
+                <span class="status-badge status-{{ profile.client.retention_status }}">
+                    {{ profile.client.retention_status }}
+                </span>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ profile.client.total_visits or 0 }}</div>
+                    <div class="stat-label">Total Visits</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">KES {{ "{:,.0f}".format(profile.client.gross_spent or 0) }}</div>
+                    <div class="stat-label">Total Spent</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ profile.client.last_visit or 'Never' }}</div>
+                    <div class="stat-label">Last Visit</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ profile.client.join_date or 'N/A' }}</div>
+                    <div class="stat-label">Client Since</div>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="add-note-btn" onclick="openNoteModal()">📝 Add Note</button>
+                <button class="add-allergy-btn" onclick="openAllergyModal()">⚠️ Add Allergy/Sensitivity</button>
+                <a href="/" class="btn-small" style="background: #4A2B42; text-decoration: none;">📄 New Invoice</a>
+            </div>
+        </div>
+        
+        <!-- Service History -->
+        <div class="section">
+            <div class="section-title">
+                📜 Service History
+                <span style="font-size: 12px; font-weight: normal;">{{ profile.services|length }} appointments</span>
+            </div>
+            
+            {% if profile.services %}
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Service</th>
+                        <th>Details</th>
+                        <th>Amount</th>
+                        <th>Paid</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for service in profile.services %}
+                    <tr>
+                        <td>{{ service.service_date }}</td>
+                        <td><strong>{{ service.service_name }}</strong></td>
+                        <td>{{ service.service_details or '-' }}</td>
+                        <td>KES {{ "{:,.0f}".format(service.amount) }}</td>
+                        <td>KES {{ "{:,.0f}".format(service.amount_paid) }}</td>
+                        <td class="{% if service.balance > 0 %}balance-positive{% else %}balance-zero{% endif %}">
+                            KES {{ "{:,.0f}".format(service.balance) }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">📅 No service history yet</div>
+            {% endif %}
+        </div>
+        
+        <!-- Appointments -->
+        <div class="section">
+            <div class="section-title">📅 Upcoming Appointments</div>
+            {% if profile.appointments %}
+                {% for apt in profile.appointments %}
+                <div class="appointment-item">
+                    <div>
+                        <span class="appointment-date">{{ apt.appointment_date }} at {{ apt.appointment_time or 'Flexible' }}</span>
+                        <span style="margin-left: 10px;">{{ apt.service_name }}</span>
+                    </div>
+                    <span class="status-badge" style="background: #D6456F20; color: #D6456F;">{{ apt.status }}</span>
+                </div>
+                {% endfor %}
+            {% else %}
+            <div class="empty-state">📅 No upcoming appointments</div>
+            {% endif %}
+        </div>
+        
+        <!-- Health & Allergies -->
+        {% if profile.health %}
+        <div class="section">
+            <div class="section-title">⚠️ Health & Allergies</div>
+            {% for allergy in profile.health %}
+            <div class="allergy-item">
+                <div class="allergy-type">{{ allergy.allergy_type }} ({{ allergy.severity }})</div>
+                <div>{{ allergy.allergy_description }}</div>
+                <div style="font-size: 11px; color: #5A4A52; margin-top: 5px;">Recorded: {{ allergy.recorded_date[:10] }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <!-- Notes -->
+        {% if profile.client.notes %}
+        <div class="section">
+            <div class="section-title">📝 Client Notes</div>
+            <div class="notes-box">{{ profile.client.notes }}</div>
+        </div>
+        {% endif %}
+        
+        <!-- Communications -->
+        {% if profile.communications %}
+        <div class="section">
+            <div class="section-title">💬 Recent Communications</div>
+            {% for comm in profile.communications[:10] %}
+            <div style="padding: 8px 0; border-bottom: 1px solid #eee; font-size: 13px;">
+                <strong>{{ comm.comm_date[:10] }}</strong> - {{ comm.comm_type }}<br>
+                <small>{{ comm.message[:100] }}</small>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div style="text-align: center;">
+            <a href="/clients" class="back-btn">← Back to All Clients</a>
+            <a href="/" class="back-btn" style="margin-left: 10px;">📄 New Invoice</a>
+        </div>
+    </div>
+    
+    <!-- Add Note Modal -->
+    <div id="noteModal" class="modal">
+        <div class="modal-content">
+            <h3>📝 Add Note for {{ profile.client.client_name }}</h3>
+            <textarea id="noteText" rows="4" placeholder="Enter note..."></textarea>
+            <div class="modal-buttons">
+                <button class="modal-save" onclick="saveNote()">Save Note</button>
+                <button class="modal-cancel" onclick="closeModal('noteModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Allergy Modal -->
+    <div id="allergyModal" class="modal">
+        <div class="modal-content">
+            <h3>⚠️ Add Allergy/Sensitivity</h3>
+            <select id="allergyType">
+                <option value="Product">Product Allergy</option>
+                <option value="Food">Food Allergy</option>
+                <option value="Scalp Sensitivity">Scalp Sensitivity</option>
+                <option value="Scent">Scent Sensitivity</option>
+                <option value="Other">Other</option>
+            </select>
+            <input type="text" id="allergyDesc" placeholder="Description (e.g., allergic to coconut oil)">
+            <select id="allergySeverity">
+                <option value="Low">Low - Mild reaction</option>
+                <option value="Medium" selected>Medium - Moderate reaction</option>
+                <option value="High">High - Severe reaction</option>
+            </select>
+            <div class="modal-buttons">
+                <button class="modal-save" onclick="saveAllergy()">Save</button>
+                <button class="modal-cancel" onclick="closeModal('allergyModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function openNoteModal() {
+            document.getElementById('noteModal').style.display = 'flex';
+        }
+        
+        function openAllergyModal() {
+            document.getElementById('allergyModal').style.display = 'flex';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        function saveNote() {
+            const note = document.getElementById('noteText').value;
+            if (!note.trim()) {
+                alert('Please enter a note');
+                return;
+            }
+            
+            fetch('/api/client/{{ profile.client.id }}/note', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({note: note})
+            }).then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Error saving note');
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('Error saving note');
+            });
+        }
+        
+        function saveAllergy() {
+            const allergy = {
+                type: document.getElementById('allergyType').value,
+                description: document.getElementById('allergyDesc').value,
+                severity: document.getElementById('allergySeverity').value
+            };
+            
+            if (!allergy.description.trim()) {
+                alert('Please enter a description');
+                return;
+            }
+            
+            fetch('/api/client/{{ profile.client.id }}/allergy', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(allergy)
+            }).then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Error saving allergy');
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('Error saving allergy');
+            });
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
