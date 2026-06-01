@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice {{ invoice_number }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 12px;
+            color: #333;
+            line-height: 1.5;
+        }
+        
+        .invoice-container {
+            max-width: 100%;
+        }
+        
+        /* Header Section */
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #2d1b4e;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .business-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2d1b4e;
+            margin-bottom: 5px;
+        }
+        
+        .business-tagline {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* Invoice Title */
+        .invoice-title {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .invoice-title h2 {
+            background: #2d1b4e;
+            color: white;
+            display: inline-block;
+            padding: 8px 25px;
+            border-radius: 20px;
+            font-size: 18px;
+        }
+        
+        /* Info Grid */
+        .info-grid {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .info-box {
+            flex: 1;
+        }
+        
+        .info-box h4 {
+            color: #2d1b4e;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        
+        .info-box p {
+            margin: 3px 0;
+            font-size: 11px;
+        }
+        
+        /* Services Table */
+        .services-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .services-table th {
+            background: #2d1b4e;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: normal;
+        }
+        
+        .services-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .services-table .total-row {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        /* Payment Section */
+        .payment-summary {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+        
+        .payment-total {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2d1b4e;
+            border-top: 2px solid #ddd;
+            padding-top: 10px;
+            margin-top: 5px;
+        }
+        
+        /* Notes Section */
+        .notes {
+            margin: 20px 0;
+            padding: 15px;
+            background: #fff8e7;
+            border-left: 4px solid #ffc107;
+            font-size: 11px;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-size: 10px;
+            color: #999;
+        }
+        
+        .thank-you {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 14px;
+            font-weight: bold;
+            color: #2d1b4e;
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="business-name">💇🏾‍♀️ JOY SISTERLOCKS</div>
+            <div class="business-tagline">Professional Sisterlocks & Microlocs Services</div>
+            <div class="business-tagline">📍 Nairobi, Kenya | 📞 +254 XXX XXX XXX</div>
+        </div>
+        
+        <!-- Invoice Title -->
+        <div class="invoice-title">
+            <h2>TAX INVOICE</h2>
+        </div>
+        
+        <!-- Info Grid -->
+        <div class="info-grid">
+            <div class="info-box">
+                <h4>INVOICE DETAILS</h4>
+                <p>Invoice No: {{ invoice_number }}</p>
+                <p>Date: {{ date }}</p>
+            </div>
+            <div class="info-box">
+                <h4>CLIENT DETAILS</h4>
+                <p><strong>{{ client_name }}</strong></p>
+                <p>📞 {{ client_phone }}</p>
+                {% if client_email %}
+                <p>📧 {{ client_email }}</p>
+                {% endif %}
+            </div>
+            <div class="info-box">
+                <h4>APPOINTMENT</h4>
+                <p>📅 {{ appointment_date if appointment_date else "To be scheduled" }}</p>
+                <p>👩🏾‍🦱 Stylist: {{ stylist_name }}</p>
+            </div>
+        </div>
+        
+        <!-- Services Table -->
+        <table class="services-table">
+            <thead>
+                <tr>
+                    <th>Service Description</th>
+                    <th style="text-align: right;">Amount (KES)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <strong>{{ service_name }}</strong>
+                        {% if service_details %}
+                        <br><small style="color: #666;">{{ service_details }}</small>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: right;">{{ "{:,.0f}".format(total) }}</td>
+                </tr>
+                <tr class="total-row">
+                    <td style="font-weight: bold;">TOTAL</td>
+                    <td style="text-align: right; font-weight: bold;">KES {{ "{:,.0f}".format(total) }}</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <!-- Payment Summary -->
+        <div class="payment-summary">
+            <div class="payment-row">
+                <span>Total Amount:</span>
+                <span><strong>KES {{ "{:,.0f}".format(total) }}</strong></span>
+            </div>
+            <div class="payment-row">
+                <span>Amount Paid:</span>
+                <span>KES {{ "{:,.0f}".format(amount_paid) }}</span>
+            </div>
+            <div class="payment-row">
+                <span>Payment Method:</span>
+                <span>{{ payment_method if payment_method else "—" }}</span>
+            </div>
+            <div class="payment-row payment-total">
+                <span>Balance Due:</span>
+                <span>KES {{ "{:,.0f}".format(balance) }}</span>
+            </div>
+        </div>
+        
+        <!-- Notes -->
+        {% if notes %}
+        <div class="notes">
+            <strong>📝 Notes:</strong><br>
+            {{ notes }}
+        </div>
+        {% endif %}
+        
+        <!-- Aftercare (standard for sisterlocs clients) -->
+        <div class="notes" style="background: #e8f5e9; border-left-color: #4caf50;">
+            <strong>💆🏾‍♀️ Aftercare Reminder:</strong><br>
+            • Next retie recommended in 4-6 weeks<br>
+            • Keep scalp moisturized<br>
+            • Sleep with satin scarf or bonnet<br>
+            • Book your next appointment in advance
+        </div>
+        
+        <div class="thank-you">
+            Thank you for choosing Joy Sisterlocks! ✨
+        </div>
+        
+        <div class="footer">
+            <p>Joy Sisterlocks | Follow us on Instagram @joysisterlocks | WhatsApp: +254 XXX XXX XXX</p>
+            <p>This is a computer-generated invoice. No signature required.</p>
+        </div>
+    </div>
+</body>
+</html>
