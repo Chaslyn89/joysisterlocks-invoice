@@ -389,39 +389,39 @@ def get_client_stats():
         
         update_retention_status()
         
-        cursor.execute('SELECT COUNT(*) as total FROM clients')
+        cursor.execute('SELECT COUNT(*) AS total FROM clients')
         total_clients = cursor.fetchone()['total']
         
-        cursor.execute('SELECT COUNT(*) as vip FROM clients WHERE category = "VIP"')
+        cursor.execute('SELECT COUNT(*) AS vip FROM clients WHERE category = "VIP"')
         vip_count = cursor.fetchone()['vip']
         
-        cursor.execute('SELECT COUNT(*) as regular FROM clients WHERE category = "Regular"')
+        cursor.execute('SELECT COUNT(*) AS regular FROM clients WHERE category = "Regular"')
         regular_count = cursor.fetchone()['regular']
         
         current_month = get_current_date()[:7]
         cursor.execute('''
-            SELECT COUNT(*) as new_this_month FROM clients 
+            SELECT COUNT(*) AS new_this_month FROM clients 
             WHERE join_date LIKE ?
         ''', (f'{current_month}%',))
         new_this_month = cursor.fetchone()['new_this_month']
         
-        cursor.execute('SELECT SUM(amount) as gross_revenue FROM service_history')
-        gross_revenue = cursor.fetchone()['gross_revenue'] or 0
+        cursor.execute('SELECT COALESCE(SUM(amount), 0) AS gross_revenue FROM service_history')
+        gross_revenue = cursor.fetchone()['gross_revenue']
         
-        cursor.execute('SELECT SUM(amount_paid) as cash_collected FROM service_history')
-        cash_collected = cursor.fetchone()['cash_collected'] or 0
+        cursor.execute('SELECT COALESCE(SUM(amount_paid), 0) AS cash_collected FROM service_history')
+        cash_collected = cursor.fetchone()['cash_collected']
         
-        cursor.execute('SELECT SUM(balance) as outstanding FROM service_history')
-        outstanding = cursor.fetchone()['outstanding'] or 0
+        cursor.execute('SELECT COALESCE(SUM(balance), 0) AS outstanding FROM service_history')
+        outstanding = cursor.fetchone()['outstanding']
         
-        cursor.execute('SELECT AVG(amount) as avg_visit FROM service_history')
-        avg_visit = cursor.fetchone()['avg_visit'] or 0
+        cursor.execute('SELECT COALESCE(AVG(amount), 0) AS avg_visit FROM service_history')
+        avg_visit = cursor.fetchone()['avg_visit']
         
-        cursor.execute('SELECT COUNT(*) as at_risk FROM clients WHERE retention_status = "At Risk"')
-        at_risk = cursor.fetchone()['at_risk'] or 0
+        cursor.execute('SELECT COUNT(*) AS at_risk FROM clients WHERE retention_status = "At Risk"')
+        at_risk = cursor.fetchone()['at_risk']
         
-        cursor.execute('SELECT COUNT(*) as lost FROM clients WHERE retention_status = "Lost"')
-        lost = cursor.fetchone()['lost'] or 0
+        cursor.execute('SELECT COUNT(*) AS lost FROM clients WHERE retention_status = "Lost"')
+        lost = cursor.fetchone()['lost']
         
         return {
             'total_clients': total_clients,
@@ -445,31 +445,31 @@ def get_dashboard_stats():
         today = get_current_date()
         
         cursor.execute('''
-            SELECT SUM(amount_paid) as today_revenue 
+            SELECT COALESCE(SUM(amount_paid), 0) AS today_revenue 
             FROM service_history 
             WHERE service_date = ?
         ''', (today,))
-        today_revenue = cursor.fetchone()['today_revenue'] or 0
+        today_revenue = cursor.fetchone()['today_revenue']
         
         cursor.execute('''
-            SELECT COUNT(*) as today_appointments 
+            SELECT COUNT(*) AS today_appointments 
             FROM appointments 
             WHERE appointment_date = ? AND status != 'cancelled'
         ''', (today,))
-        today_appointments = cursor.fetchone()['today_appointments'] or 0
+        today_appointments = cursor.fetchone()['today_appointments']
         
-        cursor.execute('SELECT SUM(balance) as total_outstanding FROM service_history')
-        total_outstanding = cursor.fetchone()['total_outstanding'] or 0
+        cursor.execute('SELECT COALESCE(SUM(balance), 0) AS total_outstanding FROM service_history')
+        total_outstanding = cursor.fetchone()['total_outstanding']
         
-        cursor.execute('SELECT SUM(amount) as gross_revenue FROM service_history')
-        gross_revenue = cursor.fetchone()['gross_revenue'] or 0
+        cursor.execute('SELECT COALESCE(SUM(amount), 0) AS gross_revenue FROM service_history')
+        gross_revenue = cursor.fetchone()['gross_revenue']
         
-        cursor.execute('SELECT SUM(amount) as total_expenses FROM expenses WHERE deleted_at IS NULL')
-        total_expenses = cursor.fetchone()['total_expenses'] or 0
+        cursor.execute('SELECT COALESCE(SUM(amount), 0) AS total_expenses FROM expenses WHERE deleted_at IS NULL')
+        total_expenses = cursor.fetchone()['total_expenses']
         
         thirty_days_ago = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
         cursor.execute('''
-            SELECT service_date, SUM(amount_paid) as daily_revenue
+            SELECT service_date, COALESCE(SUM(amount_paid), 0) AS daily_revenue
             FROM service_history
             WHERE service_date >= ?
             GROUP BY service_date
