@@ -221,14 +221,17 @@
             gap: 15px;
             margin-bottom: 15px;
             align-items: flex-end;
+            flex-wrap: wrap;
         }
         
         .service-row .form-group {
             flex: 2;
+            min-width: 150px;
         }
         
         .service-row .price-group {
             flex: 1;
+            min-width: 120px;
         }
         
         .service-row .remove-btn {
@@ -244,6 +247,19 @@
         
         .service-row .remove-btn:hover {
             background: #b83b5e;
+        }
+        
+        .other-service-field {
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .other-service-field input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
         }
         
         .add-service-btn {
@@ -440,12 +456,10 @@
                             <input type="number" name="service_price[]" class="service-price" data-row="1" value="0" min="0" step="100" required>
                         </div>
                         <button type="button" class="remove-btn" onclick="removeService(1)" style="display: none;">🗑️ Remove</button>
+                        <div id="other-field-1" class="other-service-field" style="display: none;">
+                            <input type="text" name="other_service_name_1" placeholder="Enter custom service name">
+                        </div>
                     </div>
-                </div>
-                
-                <div class="form-group" id="other-service-container" style="display: none;">
-                    <label>Specify Other Service</label>
-                    <input type="text" name="other_service_name" id="other_service_name" placeholder="Enter service name">
                 </div>
                 
                 <button type="button" class="add-service-btn" onclick="addService()">+ Add Another Service</button>
@@ -496,6 +510,27 @@
             'Installation': 15000
         };
         
+        // Show/hide other service text field
+        function toggleOtherServiceField(selectElement, rowId) {
+            const otherField = document.getElementById(`other-field-${rowId}`);
+            if (selectElement.value === 'Other') {
+                if (otherField) {
+                    otherField.style.display = 'block';
+                    const input = otherField.querySelector('input');
+                    if (input) input.required = true;
+                }
+            } else {
+                if (otherField) {
+                    otherField.style.display = 'none';
+                    const input = otherField.querySelector('input');
+                    if (input) {
+                        input.required = false;
+                        input.value = '';
+                    }
+                }
+            }
+        }
+        
         // Add new service row
         function addService() {
             serviceCounter++;
@@ -519,6 +554,9 @@
                     <input type="number" name="service_price[]" class="service-price" data-row="${serviceCounter}" value="0" min="0" step="100" required>
                 </div>
                 <button type="button" class="remove-btn" onclick="removeService(${serviceCounter})">🗑️ Remove</button>
+                <div id="other-field-${serviceCounter}" class="other-service-field" style="display: none;">
+                    <input type="text" name="other_service_name_${serviceCounter}" placeholder="Enter custom service name">
+                </div>
             `;
             container.appendChild(newRow);
             updateTotal();
@@ -526,7 +564,11 @@
             // Add event listeners to new row
             const select = newRow.querySelector('.service-select');
             const priceInput = newRow.querySelector('.service-price');
-            select.addEventListener('change', function() { autoFillPrice(this, priceInput); updateTotal(); });
+            select.addEventListener('change', function() { 
+                autoFillPrice(this, priceInput); 
+                toggleOtherServiceField(this, serviceCounter);
+                updateTotal(); 
+            });
             priceInput.addEventListener('input', updateTotal);
         }
         
@@ -544,6 +586,9 @@
             const selectedValue = selectElement.value;
             if (defaultPrices[selectedValue]) {
                 priceInput.value = defaultPrices[selectedValue];
+                updateTotal();
+            } else if (selectedValue !== 'Other') {
+                priceInput.value = 0;
                 updateTotal();
             }
         }
@@ -664,8 +709,14 @@
         document.querySelectorAll('.service-select').forEach(select => {
             const rowId = select.dataset.row;
             const priceInput = document.querySelector(`.service-price[data-row="${rowId}"]`);
-            select.addEventListener('change', function() { autoFillPrice(this, priceInput); updateTotal(); });
+            select.addEventListener('change', function() { 
+                autoFillPrice(this, priceInput); 
+                toggleOtherServiceField(this, rowId);
+                updateTotal(); 
+            });
             priceInput.addEventListener('input', updateTotal);
+            // Initialize other field visibility
+            toggleOtherServiceField(select, rowId);
         });
         
         function escapeHtml(text) {
