@@ -207,10 +207,6 @@
             border-color: #D6456F;
         }
         
-        input:invalid {
-            border-color: #D6456F;
-        }
-        
         .row {
             display: flex;
             gap: 15px;
@@ -218,6 +214,53 @@
         
         .row .form-group {
             flex: 1;
+        }
+        
+        .service-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: flex-end;
+        }
+        
+        .service-row .form-group {
+            flex: 2;
+        }
+        
+        .service-row .price-group {
+            flex: 1;
+        }
+        
+        .service-row .remove-btn {
+            background: #D6456F;
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+        
+        .service-row .remove-btn:hover {
+            background: #b83b5e;
+        }
+        
+        .add-service-btn {
+            background: #4A2B42;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            width: auto;
+        }
+        
+        .add-service-btn:hover {
+            background: #3a1f33;
         }
         
         button {
@@ -287,6 +330,13 @@
                 flex-direction: column;
                 gap: 0;
             }
+            .service-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .service-row .remove-btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -346,7 +396,7 @@
             <div class="header">
                 <h1>💇🏾‍♀️ Joy Sisterlocks</h1>
                 <p>Professional Sisterlocks & Microlocs Services</p>
-                <p style="font-size: 12px;">📍 Nairobi, Kenya</p>
+                <p style="font-size: 12px;">📍 Mezzanine Floor, Room 8, Highway Mall, Nairobi</p>
             </div>
             
             <div class="live-total" id="live-total">
@@ -370,28 +420,35 @@
                     </div>
                 </div>
                 
-                <div class="form-group">
-                    <label>Email (optional)</label>
-                    <input type="email" name="client_email" id="client_email" placeholder="client@example.com">
+                <!-- Email field removed -->
+                
+                <!-- Services Section -->
+                <div id="services-container">
+                    <div class="service-row" id="service-row-1">
+                        <div class="form-group">
+                            <label class="label-required">Service</label>
+                            <select name="service_name[]" class="service-select" data-row="1" required>
+                                <option value="">Select a service</option>
+                                <option value="Colour">Colour</option>
+                                <option value="Retouch">Retouch</option>
+                                <option value="Installation">Installation</option>
+                                <option value="Other">Other (Specify)</option>
+                            </select>
+                        </div>
+                        <div class="form-group price-group">
+                            <label class="label-required">Price (KES)</label>
+                            <input type="number" name="service_price[]" class="service-price" data-row="1" value="0" min="0" step="100" required>
+                        </div>
+                        <button type="button" class="remove-btn" onclick="removeService(1)" style="display: none;">🗑️ Remove</button>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label class="label-required">Service</label>
-                    <select name="service" id="service" required>
-                        <option value="">Select a service</option>
-                        {% for key, service in services.items() %}
-                        <option value="{{ key }}" data-price="{{ service.price }}">
-                            {{ service.name }} - KES {{ "{:,}".format(service.price) }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                    <div class="service-info">Prices include VAT | Retie services are recommended every 4-6 weeks</div>
+                <div class="form-group" id="other-service-container" style="display: none;">
+                    <label>Specify Other Service</label>
+                    <input type="text" name="other_service_name" id="other_service_name" placeholder="Enter service name">
                 </div>
                 
-                <div class="form-group">
-                    <label>Service Details (optional)</label>
-                    <textarea name="service_details" placeholder="e.g., Waist length, color: brown, 250 strands"></textarea>
-                </div>
+                <button type="button" class="add-service-btn" onclick="addService()">+ Add Another Service</button>
                 
                 <div class="row">
                     <div class="form-group">
@@ -430,42 +487,88 @@
     </div>
     
     <script>
-        // Service prices mapping
-        const servicePrices = {};
-        document.querySelectorAll('#service option').forEach(opt => {
-            if (opt.value) {
-                servicePrices[opt.value] = parseInt(opt.dataset.price) || 0;
+        let serviceCounter = 1;
+        
+        // Service prices mapping for default suggestions
+        const defaultPrices = {
+            'Colour': 4500,
+            'Retouch': 3500,
+            'Installation': 15000
+        };
+        
+        // Add new service row
+        function addService() {
+            serviceCounter++;
+            const container = document.getElementById('services-container');
+            const newRow = document.createElement('div');
+            newRow.className = 'service-row';
+            newRow.id = `service-row-${serviceCounter}`;
+            newRow.innerHTML = `
+                <div class="form-group">
+                    <label>Service</label>
+                    <select name="service_name[]" class="service-select" data-row="${serviceCounter}" required>
+                        <option value="">Select a service</option>
+                        <option value="Colour">Colour</option>
+                        <option value="Retouch">Retouch</option>
+                        <option value="Installation">Installation</option>
+                        <option value="Other">Other (Specify)</option>
+                    </select>
+                </div>
+                <div class="form-group price-group">
+                    <label>Price (KES)</label>
+                    <input type="number" name="service_price[]" class="service-price" data-row="${serviceCounter}" value="0" min="0" step="100" required>
+                </div>
+                <button type="button" class="remove-btn" onclick="removeService(${serviceCounter})">🗑️ Remove</button>
+            `;
+            container.appendChild(newRow);
+            updateTotal();
+            
+            // Add event listeners to new row
+            const select = newRow.querySelector('.service-select');
+            const priceInput = newRow.querySelector('.service-price');
+            select.addEventListener('change', function() { autoFillPrice(this, priceInput); updateTotal(); });
+            priceInput.addEventListener('input', updateTotal);
+        }
+        
+        // Remove service row
+        function removeService(rowId) {
+            const row = document.getElementById(`service-row-${rowId}`);
+            if (row) {
+                row.remove();
+                updateTotal();
             }
-        });
+        }
+        
+        // Auto-fill price when service is selected
+        function autoFillPrice(selectElement, priceInput) {
+            const selectedValue = selectElement.value;
+            if (defaultPrices[selectedValue]) {
+                priceInput.value = defaultPrices[selectedValue];
+                updateTotal();
+            }
+        }
         
         // Update live total
-        function updateLiveTotal() {
-            const service = document.getElementById('service').value;
-            const total = servicePrices[service] || 0;
+        function updateTotal() {
+            const priceInputs = document.querySelectorAll('.service-price');
+            let total = 0;
+            priceInputs.forEach(input => {
+                const price = parseInt(input.value) || 0;
+                total += price;
+            });
+            
             const amountPaid = parseInt(document.getElementById('amount_paid').value) || 0;
             const balance = total - amountPaid;
             
             document.getElementById('total-amount').textContent = total.toLocaleString();
             document.getElementById('balance-amount').textContent = balance.toLocaleString();
             
-            // Change color based on balance
             const balanceSpan = document.getElementById('balance-amount');
             if (balance > 0) {
                 balanceSpan.style.color = '#D6456F';
             } else {
                 balanceSpan.style.color = '#4CAF50';
             }
-        }
-        
-        // Auto-fill amount paid when service changes
-        function autoFillAmount() {
-            const service = document.getElementById('service').value;
-            const total = servicePrices[service] || 0;
-            const amountPaidInput = document.getElementById('amount_paid');
-            if (amountPaidInput.value == 0 || amountPaidInput.value == '') {
-                amountPaidInput.value = total;
-            }
-            updateLiveTotal();
         }
         
         // Show/hide M-Pesa field
@@ -475,17 +578,12 @@
             mpesaField.style.display = paymentMethod === 'M-Pesa' ? 'block' : 'none';
         }
         
-        // Fill client form (XSS-safe with tojson)
+        // Fill client form
         function fillClientForm(name, phone, email) {
             document.getElementById('client_name').value = name;
             document.getElementById('client_phone').value = phone;
-            if (email) {
-                document.getElementById('client_email').value = email;
-            }
-            // Clear search result
             document.getElementById('search-result').innerHTML = '';
             
-            // Fetch client summary
             fetch(`/api/search?q=${encodeURIComponent(phone)}`)
                 .then(res => res.json())
                 .then(data => {
@@ -500,9 +598,6 @@
             const summaryDiv = document.getElementById('client-summary');
             const contentDiv = document.getElementById('summary-content');
             
-            const categoryClass = client.category === 'VIP' ? 'vip-badge' : '';
-            const categoryHtml = client.category === 'VIP' ? '<span class="vip-badge">⭐ VIP Client</span>' : '';
-            
             contentDiv.innerHTML = `
                 <div class="summary-row">
                     <span>📞 ${escapeHtml(client.client_phone)}</span>
@@ -513,13 +608,8 @@
                 </div>
                 <div class="summary-row">
                     <span>📅 Last: ${client.last_visit || 'Never'}</span>
-                    ${categoryHtml}
+                    ${client.category === 'VIP' ? '<span class="vip-badge">⭐ VIP Client</span>' : ''}
                 </div>
-                ${(client.total_visits || 0) % 5 === 4 ? `
-                <div class="summary-row" style="color: #D6456F; margin-top: 8px;">
-                    🎉 1 more visit until free wash & style!
-                </div>
-                ` : ''}
             `;
             summaryDiv.classList.add('show');
         }
@@ -541,7 +631,7 @@
                             if (data.length > 0) {
                                 const client = data[0];
                                 searchResult.innerHTML = `
-                                    <a href="#" onclick="fillClientForm('${escapeHtml(client.client_name)}', '${escapeHtml(client.client_phone)}', '${escapeHtml(client.client_email || '')}'); return false;">
+                                    <a href="#" onclick="fillClientForm('${escapeHtml(client.client_name)}', '${escapeHtml(client.client_phone)}', ''); return false;">
                                         👤 Existing client: ${escapeHtml(client.client_name)}<br>
                                         <small>Click to load</small>
                                     </a>
@@ -564,13 +654,19 @@
         form.addEventListener('submit', function(e) {
             submitBtn.disabled = true;
             submitBtn.textContent = '⏳ Generating PDF, please wait...';
-            // Form will submit normally
         });
         
         // Event listeners
-        document.getElementById('service').addEventListener('change', autoFillAmount);
-        document.getElementById('amount_paid').addEventListener('input', updateLiveTotal);
+        document.getElementById('amount_paid').addEventListener('input', updateTotal);
         document.getElementById('payment_method').addEventListener('change', toggleMpesaField);
+        
+        // Initialize event listeners for existing service rows
+        document.querySelectorAll('.service-select').forEach(select => {
+            const rowId = select.dataset.row;
+            const priceInput = document.querySelector(`.service-price[data-row="${rowId}"]`);
+            select.addEventListener('change', function() { autoFillPrice(this, priceInput); updateTotal(); });
+            priceInput.addEventListener('input', updateTotal);
+        });
         
         function escapeHtml(text) {
             if (!text) return '';
@@ -580,7 +676,7 @@
         }
         
         // Initialize
-        updateLiveTotal();
+        updateTotal();
         toggleMpesaField();
     </script>
 </body>
