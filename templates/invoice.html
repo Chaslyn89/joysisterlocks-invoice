@@ -75,17 +75,18 @@
             display: table-cell;
             width: 33%;
             vertical-align: top;
-            padding: 10px;
+            padding: 12px;
         }
         
         .info-table h4 {
             color: #4A2B42;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-size: 11px;
+            font-weight: bold;
         }
         
         .info-table p {
-            margin: 3px 0;
+            margin: 5px 0;
             font-size: 11px;
         }
         
@@ -181,21 +182,6 @@
             font-size: 9px;
         }
         
-        /* Loyalty Section */
-        .loyalty-section {
-            margin: 10px 0;
-            padding: 8px;
-            background: #F4E3E5;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 10px;
-        }
-        
-        .loyalty-stars {
-            font-size: 12px;
-            color: #D6456F;
-        }
-        
         /* Notes Section */
         .notes {
             margin: 8px 0;
@@ -209,10 +195,31 @@
         .footer {
             text-align: center;
             margin-top: 15px;
-            padding-top: 8px;
+            padding-top: 10px;
             border-top: 1px solid #ddd;
-            font-size: 8px;
-            color: #999;
+            font-size: 9px;
+            color: #666;
+        }
+        
+        .footer a {
+            color: #D6456F;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .social-links {
+            margin: 5px 0;
+        }
+        
+        .social-links a {
+            display: inline-block;
+            margin: 0 8px;
+            color: #D6456F;
+            text-decoration: none;
         }
         
         .thank-you {
@@ -260,19 +267,19 @@
                     <h4>INVOICE DETAILS</h4>
                     <p>Invoice No: <span class="invoice-number-highlight">{{ invoice_number }}</span></p>
                     <p>Date: {{ date }}</p>
-                </td>
+                </td
                 <td>
                     <h4>CLIENT DETAILS</h4>
                     <p><strong>{{ client_name }}</strong></p>
                     <p>📞 {{ client_phone }}</p>
-                </td>
+                </td
                 <td>
                     <h4>APPOINTMENT</h4>
                     <p>📅 {{ appointment_date if appointment_date else "To be scheduled" }}</p>
                     <p>👩🏾‍🦱 Stylist: {{ stylist_name }}</p>
-                </td>
-            </tr>
-        </table>
+                </td
+            </tr
+         </table
         
         <!-- Accent Divider -->
         <div class="accent-divider"></div>
@@ -291,29 +298,29 @@
                 <tr>
                     <th>Service Description</th>
                     <th style="text-align: right;">Amount (KES)</th>
-                </tr>
+                </tr
             </thead>
             <tbody>
                 {% for service in services_list %}
-                <tr>
-                    <td><strong>{{ service.name }}</strong></td>
-                    <td style="text-align: right;">{{ "{:,.0f}".format(service.price) }}</td>
-                </tr>
+                <tr
+                    <td><strong>{{ service.name }}</strong></td
+                    <td style="text-align: right;">{{ "{:,.0f}".format(service.price) }}</td
+                </tr
                 {% endfor %}
                 <tr class="total-row">
-                    <td style="font-weight: bold;">SUBTOTAL</td>
-                    <td style="text-align: right; font-weight: bold;">KES {{ "{:,.2f}".format(subtotal) }}</td>
-                </tr>
+                    <td style="font-weight: bold;">SUBTOTAL</td
+                    <td style="text-align: right; font-weight: bold;">KES {{ "{:,.2f}".format(subtotal) }}</td
+                </tr
                 <tr class="total-row">
-                    <td style="font-weight: bold;">VAT (16%)</td>
-                    <td style="text-align: right; font-weight: bold;">KES {{ "{:,.2f}".format(vat_amount) }}</td>
-                </tr>
+                    <td style="font-weight: bold;">VAT (16%)</td
+                    <td style="text-align: right; font-weight: bold;">KES {{ "{:,.2f}".format(vat_amount) }}</td
+                </tr
                 <tr class="total-row">
-                    <td style="font-weight: bold;">TOTAL (incl. VAT)</td>
-                    <td style="text-align: right; font-weight: bold;">KES {{ "{:,.0f}".format(total_with_vat) }}</td>
-                </tr>
+                    <td style="font-weight: bold;">TOTAL (incl. VAT)</td
+                    <td style="text-align: right; font-weight: bold;">KES {{ "{:,.0f}".format(total_with_vat) }}</td
+                </tr
             </tbody>
-        </table>
+        </table
         
         <!-- Accent Divider -->
         <div class="accent-divider"></div>
@@ -350,11 +357,7 @@
             This is a tax invoice for services rendered. VAT (16%) is included in the total amount.
         </div>
         
-        <!-- Loyalty Section - Dynamic Message -->
-        <div class="loyalty-section">
-            <div class="loyalty-stars">{{ loyalty_stars }}</div>
-            <p>{{ reward_message }}</p>
-        </div>
+        <!-- Loyalty Section - REMOVED -->
         
         <!-- Notes -->
         {% if notes %}
@@ -377,10 +380,15 @@
             Thank you for choosing {{ business.name }}! ✨
         </div>
         
+        <!-- Footer with Clickable Social Links -->
         <div class="footer">
-            <p>{{ business.name }} | Follow us on Instagram {{ business.instagram }} | WhatsApp: {{ business.phone }}</p>
+            <div class="social-links">
+                <a href="https://www.instagram.com/{{ business.instagram|replace('@', '') }}" target="_blank">📷 Instagram</a> |
+                <a href="https://wa.me/{{ business.whatsapp }}" target="_blank">💬 WhatsApp</a> |
+                <a href="https://joysisterlocks.co.ke" target="_blank">🌐 Website</a>
+            </div>
+            <p>{{ business.name }} | {{ business.location }}</p>
             <p>This is a computer-generated invoice. No signature required.</p>
-            <p>⭐ Every 5th visit gets a FREE Wash & Style! ⭐</p>
         </div>
     </div>
 </body>
