@@ -258,19 +258,19 @@
                     <h4>INVOICE DETAILS</h4>
                     <p>Invoice No: <span class="invoice-number-highlight">{{ invoice_number }}</span></p>
                     <p>Date: {{ date }}</p>
-                </td>
+                </td
                 <td>
                     <h4>CLIENT DETAILS</h4>
                     <p><strong>{{ client_name }}</strong></p>
                     <p>📞 {{ client_phone }}</p>
-                </td>
+                </td
                 <td>
                     <h4>APPOINTMENT</h4>
                     <p>📅 {{ appointment_date if appointment_date else "To be scheduled" }}</p>
                     <p>👩🏾‍🦱 Stylist: {{ stylist_name }}</p>
-                </td>
-            </tr>
-        </table>
+                </td
+            </tr
+        </table
         
         <!-- Accent Divider -->
         <div class="accent-divider"></div>
@@ -289,29 +289,29 @@
                 <tr>
                     <th>Service Description</th>
                     <th style="text-align: right;">Amount (KES)</th>
-                </tr>
+                </tr
             </thead>
             <tbody>
                 {% for service in services_list %}
-                <tr>
-                    <td><strong>{{ service.name }}</strong></td>
-                    <td style="text-align: right;">{{ "{:,.0f}".format(service.price) }}</td>
-                </tr>
+                <tr
+                    <td><strong>{{ service.name }}</strong></td
+                    <td style="text-align: right;">{{ "{:,.0f}".format(service.price) }}</td
+                </tr
                 {% endfor %}
                 <tr class="total-row">
-                    <td style="font-weight: bold;">SUBTOTAL</td
-                    <td style="text-align: right; font-weight: bold;">KES {{ "{:,.2f}".format(subtotal) }}</td
-                </tr
+                    <td style="font-weight: bold;">SUBTOTAL</td>
+                    <td style="text-align: right; font-weight: bold;">KES {{ "{:,.2f}".format(subtotal) }}</td>
+                </tr>
                 <tr class="total-row">
-                    <td style="font-weight: bold;">VAT (16%)</td
-                    <td style="text-align: right; font-weight: bold;">KES {{ "{:,.2f}".format(vat_amount) }}</td
-                </tr
+                    <td style="font-weight: bold;">VAT (16%)</td>
+                    <td style="text-align: right; font-weight: bold;">KES {{ "{:,.2f}".format(vat_amount) }}</td>
+                </tr>
                 <tr class="total-row">
-                    <td style="font-weight: bold;">TOTAL (incl. VAT)</td
-                    <td style="text-align: right; font-weight: bold;">KES {{ "{:,.0f}".format(total_with_vat) }}</td
-                </tr
+                    <td style="font-weight: bold;">TOTAL (incl. VAT)</td>
+                    <td style="text-align: right; font-weight: bold;">KES {{ "{:,.0f}".format(total_with_vat) }}</td>
+                </tr>
             </tbody>
-        </table
+        </table>
         
         <!-- Accent Divider -->
         <div class="accent-divider"></div>
