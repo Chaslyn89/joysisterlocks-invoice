@@ -75,18 +75,17 @@
             display: table-cell;
             width: 33%;
             vertical-align: top;
-            padding: 12px;
+            padding: 10px;
         }
         
         .info-table h4 {
             color: #4A2B42;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             font-size: 11px;
-            font-weight: bold;
         }
         
         .info-table p {
-            margin: 5px 0;
+            margin: 3px 0;
             font-size: 11px;
         }
         
@@ -195,7 +194,7 @@
         .footer {
             text-align: center;
             margin-top: 15px;
-            padding-top: 10px;
+            padding-top: 8px;
             border-top: 1px solid #ddd;
             font-size: 9px;
             color: #666;
@@ -204,7 +203,6 @@
         .footer a {
             color: #D6456F;
             text-decoration: none;
-            margin: 0 5px;
         }
         
         .footer a:hover {
@@ -212,14 +210,7 @@
         }
         
         .social-links {
-            margin: 5px 0;
-        }
-        
-        .social-links a {
-            display: inline-block;
-            margin: 0 8px;
-            color: #D6456F;
-            text-decoration: none;
+            margin-bottom: 5px;
         }
         
         .thank-you {
@@ -267,19 +258,19 @@
                     <h4>INVOICE DETAILS</h4>
                     <p>Invoice No: <span class="invoice-number-highlight">{{ invoice_number }}</span></p>
                     <p>Date: {{ date }}</p>
-                </td
+                </td>
                 <td>
                     <h4>CLIENT DETAILS</h4>
                     <p><strong>{{ client_name }}</strong></p>
                     <p>📞 {{ client_phone }}</p>
-                </td
+                </td>
                 <td>
                     <h4>APPOINTMENT</h4>
                     <p>📅 {{ appointment_date if appointment_date else "To be scheduled" }}</p>
                     <p>👩🏾‍🦱 Stylist: {{ stylist_name }}</p>
-                </td
-            </tr
-         </table
+                </td>
+            </tr>
+        </table>
         
         <!-- Accent Divider -->
         <div class="accent-divider"></div>
@@ -298,14 +289,14 @@
                 <tr>
                     <th>Service Description</th>
                     <th style="text-align: right;">Amount (KES)</th>
-                </tr
+                </tr>
             </thead>
             <tbody>
                 {% for service in services_list %}
-                <tr
-                    <td><strong>{{ service.name }}</strong></td
-                    <td style="text-align: right;">{{ "{:,.0f}".format(service.price) }}</td
-                </tr
+                <tr>
+                    <td><strong>{{ service.name }}</strong></td>
+                    <td style="text-align: right;">{{ "{:,.0f}".format(service.price) }}</td>
+                </tr>
                 {% endfor %}
                 <tr class="total-row">
                     <td style="font-weight: bold;">SUBTOTAL</td
@@ -383,8 +374,8 @@
         <!-- Footer with Clickable Social Links -->
         <div class="footer">
             <div class="social-links">
-                <a href="https://www.instagram.com/{{ business.instagram|replace('@', '') }}" target="_blank">📷 Instagram</a> |
-                <a href="https://wa.me/{{ business.whatsapp }}" target="_blank">💬 WhatsApp</a> |
+                <a href="https://www.instagram.com/{{ business.instagram|replace('@', '') }}" target="_blank">📷 Instagram</a> &nbsp;|&nbsp;
+                <a href="https://wa.me/{{ business.whatsapp }}" target="_blank">💬 WhatsApp</a> &nbsp;|&nbsp;
                 <a href="https://joysisterlocks.co.ke" target="_blank">🌐 Website</a>
             </div>
             <p>{{ business.name }} | {{ business.location }}</p>
