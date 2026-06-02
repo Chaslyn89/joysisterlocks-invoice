@@ -62,7 +62,7 @@ BUSINESS = {
     'name': 'Joy Sisterlocks',
     'phone': '+254 713 700 421',
     'whatsapp': '254713700421',
-    'location': 'Nairobi, Kenya',
+    'location': 'Highway Mall, Opposite Nyayo Stadium, Nairobi, Kenya',
     'instagram': '@joysisterlocks_kenya',
     'email': 'joysistalocks5@gmail.com'
 }
