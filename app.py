@@ -182,9 +182,20 @@ def index():
         client_phone = request.form.get("client_phone", "").strip()
         client_email = request.form.get("client_email", "").strip()
         
-        # Handle multiple services
-        service_names = request.form.getlist("service_name[]")
+        # Handle multiple services with "Other" custom names
+        service_names_raw = request.form.getlist("service_name[]")
         service_prices = request.form.getlist("service_price[]")
+        
+        service_names = []
+        for i, name in enumerate(service_names_raw):
+            if name == "Other":
+                custom_name = request.form.get(f"other_service_name_{i+1}", "")
+                if custom_name:
+                    service_names.append(custom_name)
+                else:
+                    service_names.append(name)
+            else:
+                service_names.append(name)
         
         if not client_name:
             return "Client name is required", 400
