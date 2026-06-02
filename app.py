@@ -62,7 +62,7 @@ BUSINESS = {
     'name': 'Joy Sisterlocks',
     'phone': '+254 713 700 421',
     'whatsapp': '254713700421',
-    'location': 'Highway Mall, Opposite Nyayo Stadium, Nairobi, Kenya',
+    'location': 'Mezzanine Floor, Room 8, Highway Mall, Nairobi, Kenya',
     'instagram': '@joysisterlocks_kenya',
     'email': 'joysistalocks5@gmail.com'
 }
@@ -71,6 +71,13 @@ BUSINESS = {
 def format_money(amount):
     """Format money safely"""
     return f"KES {amount:,.0f}" if amount else "KES 0"
+
+def calculate_vat_inclusive(total_inclusive):
+    """Calculate subtotal and VAT from VAT-inclusive total"""
+    vat_rate = 0.16
+    subtotal = total_inclusive / (1 + vat_rate)
+    vat_amount = total_inclusive - subtotal
+    return round(subtotal, 2), round(vat_amount, 2)
 
 def calculate_loyalty_stars(visits):
     """Calculate stars for loyalty display"""
@@ -133,12 +140,9 @@ def format_phone(phone):
 
 # ============ SERVICE MENU ============
 SERVICES = {
-    "retie": {"name": "Sister Locs Retie", "price": 3500},
-    "micro_retie": {"name": "Micro Locs Retie", "price": 3500},
-    "installation": {"name": "Sister Locs Full Installation", "price": 15000},
-    "colour": {"name": "Sister Locs Colour & Styling", "price": 4500},
-    "colour_retie": {"name": "Sister Locs Colour + Retie", "price": 5500},
-    "wash_style": {"name": "Wash, Retie, Massage & Styling", "price": 3000},
+    "colour": {"name": "Colour", "price": 0},
+    "retouch": {"name": "Retouch", "price": 0},
+    "installation": {"name": "Installation", "price": 0},
 }
 
 # ============ AUTH ROUTES ============
@@ -177,13 +181,10 @@ def index():
         client_name = request.form.get("client_name", "").strip()
         client_phone = request.form.get("client_phone", "").strip()
         client_email = request.form.get("client_email", "").strip()
-        service = request.form.get("service")
-        service_details = request.form.get("service_details", "")
-        appointment_date = request.form.get("appointment_date", "")
-        payment_method = request.form.get("payment_method", "Cash")
-        amount_paid = request.form.get("amount_paid", 0)
-        notes = request.form.get("notes", "")
-        mpesa_code = request.form.get("mpesa_code", "")
+        
+        # Handle multiple services
+        service_names = request.form.getlist("service_name[]")
+        service_prices = request.form.getlist("service_price[]")
         
         if not client_name:
             return "Client name is required", 400
@@ -194,23 +195,35 @@ def index():
         if not validate_kenyan_phone(client_phone):
             return "Invalid Kenyan phone number. Use format: 07XXXXXXXX or 01XXXXXXXX", 400
         
-        if not service:
-            return "Please select a service", 400
+        if not service_names or not service_names[0]:
+            return "Please select at least one service", 400
+        
+        # Calculate totals
+        total_amount = 0
+        services_list = []
+        for i, name in enumerate(service_names):
+            if name and i < len(service_prices):
+                price = int(service_prices[i]) if service_prices[i] else 0
+                total_amount += price
+                services_list.append({"name": name, "price": price})
+        
+        # Calculate VAT inclusive
+        subtotal, vat_amount = calculate_vat_inclusive(total_amount)
+        total_with_vat = total_amount
+        
+        appointment_date = request.form.get("appointment_date", "")
+        payment_method = request.form.get("payment_method", "Cash")
+        amount_paid = request.form.get("amount_paid", 0)
+        notes = request.form.get("notes", "")
+        mpesa_code = request.form.get("mpesa_code", "")
         
         try:
             amount_paid_int = int(amount_paid) if amount_paid else 0
         except ValueError:
             amount_paid_int = 0
         
+        balance = total_amount - amount_paid_int
         formatted_phone = format_phone(client_phone)
-        
-        service_info = SERVICES.get(service, {"name": service, "price": 0})
-        if service_info["price"] == 0:
-            return "Invalid service selected", 400
-        
-        total = int(service_info["price"])
-        balance = total - amount_paid_int
-        
         invoice_number = generate_invoice_number()
         current_date = datetime.now().strftime("%Y-%m-%d")
         
@@ -220,15 +233,14 @@ def index():
             'client_email': client_email
         }
         client_id = get_or_create_client(client_data)
-        
         client_visits = get_client_visits(client_id)
         
         invoice_data = {
             'invoice_number': invoice_number,
             'date': current_date,
-            'service_name': service_info["name"],
-            'service_details': service_details,
-            'total': total,
+            'service_name': ", ".join([s["name"] for s in services_list]),
+            'service_details': "",
+            'total': total_amount,
             'amount_paid': amount_paid_int,
             'balance': balance,
             'payment_method': payment_method,
@@ -238,7 +250,7 @@ def index():
         }
         save_service_record(client_id, invoice_data)
         
-        log_communication(client_id, 'Invoice', f'Invoice {invoice_number} generated for {service_info["name"]}', 'Joy')
+        log_communication(client_id, 'Invoice', f'Invoice {invoice_number} generated', 'Joy')
         
         loyalty_stars = calculate_loyalty_stars(client_visits + 1)
         reward_message = get_reward_message(client_visits + 1)
@@ -246,32 +258,29 @@ def index():
         whatsapp_url = f"https://wa.me/{BUSINESS['whatsapp']}"
         qr_code_url = generate_qr_code(whatsapp_url)
         
-        vat_rate = 0.16
-        vat_amount = int(total * vat_rate)
-        total_with_vat = total + vat_amount
-        
         html = render_template("invoice.html",
             invoice_number=invoice_number,
             date=current_date,
             client_name=client_name,
             client_phone=formatted_phone,
-            client_email=client_email,
-            service_name=service_info["name"],
-            service_details=service_details,
+            service_name=", ".join([s["name"] for s in services_list]),
+            service_details="",
             appointment_date=appointment_date,
-            total=total,
+            total=total_amount,
             amount_paid=amount_paid_int,
             balance=balance,
             payment_method=payment_method,
             notes=notes,
             stylist_name="Joy",
             mpesa_code=mpesa_code,
+            services_list=services_list,
+            subtotal=subtotal,
+            vat_amount=vat_amount,
+            total_with_vat=total_with_vat,
             loyalty_stars=loyalty_stars,
             reward_message=reward_message,
             qr_code_url=qr_code_url,
             business=BUSINESS,
-            vat_amount=vat_amount,
-            total_with_vat=total_with_vat,
             client_visits=client_visits + 1
         )
         
